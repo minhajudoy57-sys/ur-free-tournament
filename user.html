@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UG Income BD</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial, sans-serif;
+}
+
+body{
+  background:#f3f6fb;
+  color:#172033;
+  padding-bottom:80px;
+}
+
+/* Loading Screen */
+#loading-screen {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: #ffffff;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  z-index: 9999;
+  transition: opacity 0.5s ease;
+}
+
+.spinner {
+  width: 50px; height: 50px;
+  border: 5px solid #e7f8f1;
+  border-top: 5px solid #087f5b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 15px; font-weight: bold; color: #087f5b;
+}
+
+/* Auth Screens */
+.auth-container {
+  display: none; max-width: 400px;
+  margin: 40px auto; padding: 25px;
+  background: white; border-radius: 20px;
+  box-shadow: 0 5px 20px rgba(0,0,0,.08);
+}
+
+.auth-title {
+  text-align: center; margin-bottom: 20px; color: #087f5b; font-size: 24px;
+}
+
+.auth-toggle {
+  text-align: center; margin-top: 15px; font-size: 14px; color: #777;
+}
+
+.auth-toggle span {
+  color: #087f5b; font-weight: bold; cursor: pointer;
+}
+
+/* App Header & Structure */
+header{
+  background:linear-gradient(135deg,#087f5b,#12b886);
+  color:white; padding:22px 18px; border-radius:0 0 25px 25px;
+}
+
+.logo{ font-size:25px; font-weight:bold; }
+.header-small{ margin-top:6px; opacity:.9; font-size:13px; }
+
+.container{ max-width:600px; margin:auto; padding:15px; }
+.app-page { display: none; }
+.app-page.active-page { display: block; }
+
+.balance{
+  background:white; margin-top:-5px;
+  border-radius:18px; padding:20px;
+  box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.balance-title{ color:#777; font-size:14px; }
+.amount{ font-size:34px; font-weight:bold; margin:7px 0; color:#087f5b; }
+
+.stats{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:15px; }
+.stat{ background:#f5f8fa; padding:14px; border-radius:13px; }
+.stat b{ display:block; font-size:20px; margin-top:4px; }
+
+.section-title{ margin:25px 3px 12px; font-size:19px; }
+.tasks{ display:grid; gap:12px; }
+
+.task{
+  background:white; border-radius:16px; padding:17px;
+  box-shadow:0 3px 13px rgba(0,0,0,.06);
+  display:flex; align-items:center; justify-content:space-between;
+}
+
+.task-info{ display:flex; align-items:center; gap:13px; }
+.icon{
+  width:45px; height:45px; border-radius:13px; background:#e7f8f1;
+  display:flex; align-items:center; justify-content:center; font-size:22px;
+}
+
+button{ border:0; cursor:pointer; border-radius:10px; padding:10px 14px; font-weight:bold; }
+.earn-btn, .auth-btn{ background:#087f5b; color:white; }
+.auth-btn { width: 100%; padding: 12px; margin-top: 10px; }
+.logout-btn { background: #e63946; color: white; width: 100%; padding: 12px; margin-top: 20px; }
+.earn-btn:disabled, .spin-btn-main:disabled{ background:#aaa; cursor: not-allowed; }
+
+.withdraw, .profile-card, .spin-card{
+  background:white; padding:18px; border-radius:17px; box-shadow:0 3px 13px rgba(0,0,0,.06);
+}
+
+.withdraw-limit-info {
+  background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534;
+  padding: 12px; border-radius: 10px; font-size: 13px; margin-bottom: 12px;
+}
+
+/* Wheel Design */
+.spin-card { text-align: center; position: relative; }
+.wheel-wrapper { position: relative; width: 260px; height: 260px; margin: 20px auto; }
+.wheel-pointer {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent;
+  border-top: 22px solid #e63946; z-index: 10;
+}
+
+.wheel {
+  width: 100%; height: 100%; border-radius: 50%; border: 5px solid #087f5b;
+  position: relative; overflow: hidden;
+  transition: transform 4s cubic-bezier(0.15, 0.9, 0.15, 1);
+  background: conic-gradient(
+    #ff6b6b 0deg 60deg, #4ecdc4 60deg 120deg, #ffe66d 120deg 180deg,
+    #1dd1a1 180deg 240deg, #ff9ff3 240deg 300deg, #54a0ff 300deg 360deg
+  );
+}
+
+.slice-text {
+  position: absolute; top: 50%; left: 50%; width: 100px; height: 30px;
+  margin-top: -15px; margin-left: -50px; transform-origin: center center;
+  font-weight: bold; font-size: 13px; color: #fff; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+  pointer-events: none;
+}
+
+.spin-btn-main { width: 80%; padding: 14px; background: #087f5b; color: white; font-size: 16px; margin-top: 10px; }
+
+/* Profile Card */
+.profile-card { text-align: center; }
+.profile-avatar { font-size: 50px; margin-bottom: 10px; }
+.profile-info { margin: 10px 0; text-align: left; border-top: 1px solid #eee; padding-top: 10px; }
+.profile-info div { padding: 8px 0; display: flex; justify-content: space-between; border-bottom: 1px solid #f9f9f9; }
+
+input, select{ width:100%; padding:13px; margin:8px 0; border:1px solid #ddd; border-radius:10px; outline:none; }
+.withdraw-btn{ width:100%; background:#087f5b; color:white; margin-top:7px; }
+
+/* Modal Popup (Verification System) */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6); display: none;
+  justify-content: center; align-items: center; z-index: 1000;
+}
+
+.modal-card {
+  background: white; width: 90%; max-width: 380px; padding: 25px;
+  border-radius: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.modal-icon { font-size: 45px; margin-bottom: 10px; }
+.modal-title { font-size: 20px; font-weight: bold; color: #087f5b; margin-bottom: 8px; }
+.modal-desc { font-size: 13.5px; color: #666; margin-bottom: 15px; line-height: 1.4; }
+
+.verify-submit-btn {
+  width: 100%; background: #087f5b; color: white; padding: 12px;
+  border-radius: 10px; font-weight: bold; margin-top: 10px;
+}
+
+.cancel-btn {
+  width: 100%; background: #e4e6eb; color: #444; padding: 10px;
+  border-radius: 10px; font-weight: bold; margin-top: 8px;
+}
+
+.history{ background:white; border-radius:17px; padding:5px 16px; }
+.history-item{ padding:14px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; }
+.history-item:last-child{ border-bottom:0; }
+.plus{ color:#087f5b; font-weight:bold; }
+
+.bottom-nav{
+  position:fixed; bottom:0; left:0; right:0; background:white; height:65px;
+  box-shadow:0 -3px 15px rgba(0,0,0,.1); display:none; justify-content:space-around; align-items:center; z-index:10;
+}
+
+.nav-item{ text-align:center; font-size:12px; color:#777; cursor: pointer; }
+.nav-item.active{ color:#087f5b; font-weight:bold; }
+.nav-icon{ font-size:20px; display:block; margin-bottom:3px; }
+
+.toast{
+  position:fixed; left:50%; bottom:85px; transform:translateX(-50%);
+  background:#172033; color:white; padding:12px 18px; border-radius:10px;
+  display:none; z-index:20; font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Loading Screen -->
+<div id="loading-screen">
+  <div class="spinner"></div>
+  <div class="loading-text">UG Income BD...</div>
+</div>
+
+<!-- Header -->
+<header id="main-header" style="display:none;">
+  <div class="container">
+    <div class="logo">💰 UG Income BD</div>
+    <div class="header-small">Earn • Complete Tasks • Track Balance</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Sign In Form -->
+  <div class="auth-container" id="signin-box">
+    <h2 class="auth-title">Sign In</h2>
+    <input type="text" id="signin-phone" placeholder="Mobile Number">
+    <input type="password" id="signin-password" placeholder="Password">
+    <button class="auth-btn" onclick="handleSignIn()">Sign In</button>
+    <div class="auth-toggle">
+      Don't have an account? <span onclick="switchAuth('signup')">Sign Up</span>
+    </div>
+  </div>
+
+  <!-- Sign Up Form -->
+  <div class="auth-container" id="signup-box">
+    <h2 class="auth-title">Sign Up</h2>
+    <p style="text-align:center; color:#087f5b; font-size:13px; font-weight:bold; margin-bottom:10px;">🎁 নতুন একাউন্ট খুললেই পাচ্ছেন ৳২০১ বোনাস!</p>
+    <input type="text" id="signup-name" placeholder="Full Name">
+    <input type="text" id="signup-phone" placeholder="Mobile Number">
+    <input type="password" id="signup-password" placeholder="Password">
+    <button class="auth-btn" onclick="handleSignUp()">Sign Up & Get ৳201</button>
+    <div class="auth-toggle">
+      Already have an account? <span onclick="switchAuth('signin')">Sign In</span>
+    </div>
+  </div>
+
+  <!-- Home Page -->
+  <div class="app-page" id="page-home">
+    <div class="balance">
+      <div class="balance-title"> Balance</div>
+      <div class="amount">৳ <span id="balance">0.00</span></div>
+
+      <div class="stats">
+        <div class="stat">
+          Today's Earn
+          <b>৳ <span id="today">0.00</span></b>
+        </div>
+
+        <div class="stat">
+          Tasks Complete
+          <b><span id="completed">0</span></b>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">📜 Recent History</h2>
+    <div class="history" id="history">
+      <div class="history-item">
+        <span>No earning yet</span>
+        <span>—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tasks Page -->
+  <div class="app-page" id="page-tasks">
+    <h2 class="section-title">🎯 Daily Tasks</h2>
+    <div class="tasks">
+      <div class="task">
+        <div class="task-info">
+          <div class="icon">📺</div>
+          <div>
+            <h3>Watch Ad</h3>
+            <p>Reward: ৳20.00 (5 Sec)</p>
+          </div>
+        </div>
+        <button class="earn-btn" id="ad-btn" onclick="watchAd(this)">Watch Ad</button>
+      </div>
+
+      <div class="task">
+        <div class="task-info">
+          <div class="icon">🎡</div>
+          <div>
+            <h3>Spin & Win</h3>
+            <p>Win ৳50 - ৳1000 (Daily 1 Spin)</p>
+          </div>
+        </div>
+        <button class="earn-btn" onclick="switchTab('spin', null)">Spin Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spin Page -->
+  <div class="app-page" id="page-spin">
+    <h2 class="section-title">🎡 Daily Spin Bonus</h2>
+    <div class="spin-card">
+      <p style="color:#666; font-size:14px;">দৈনিক ১ বার চাকা ঘুরি‌য়ে বোনাস জিতুন!</p>
+      
+      <div class="wheel-wrapper">
+        <div class="wheel-pointer"></div>
+        <div class="wheel" id="wheel"></div>
+      </div>
+
+      <button class="spin-btn-main" id="spin-start-btn" onclick="startSpin()">Spin Now (1/1)</button>
+    </div>
+  </div>
+
+  <!-- Withdraw Page -->
+  <div class="app-page" id="page-withdraw">
+    <h2 class="section-title">💳 Withdraw</h2>
+    <div class="withdraw">
+      <div class="withdraw-limit-info">
+        📌 <b>উইথড্র লিমিট:</b><br>
+        • মিনিমাম উইথড্র: <b>৳৭০০</b><br>
+        • ম্যাক্সিমাম উইথড্র: <b>৳<span id="max-limit-text">700</span></b>
+      </div>
+      <select id="method">
+        <option>bKash</option>
+        <option>Nagad</option>
+        <option>Rocket</option>
+      </select>
+      <input type="text" id="number" placeholder="Mobile Number">
+      <input type="number" id="withdrawAmount" placeholder="Amount (Min: ৳700)">
+      <button class="withdraw-btn" onclick="processWithdraw()">Request Withdraw</button>
+    </div>
+  </div>
+
+  <!-- Profile Page -->
+  <div class="app-page" id="page-profile">
+    <h2 class="section-title">👤 User Profile</h2>
+    <div class="profile-card">
+      <div class="profile-avatar">👤</div>
+      <h3 id="user-display-name">User Name</h3>
+      <p style="color:#777; font-size:13px;" id="user-display-phone">01700000000</p>
+
+      <div class="profile-info">
+        <div><span>Account Status:</span> <b id="verify-status-text" style="color:#d97706;">Unverified</b></div>
+        <div><span>Account Type:</span> <b>Free Member</b></div>
+        <div><span>Joined:</span> <b id="user-joined-date">Today</b></div>
+      </div>
+
+      <button class="logout-btn" onclick="handleLogout()">Log Out</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- OTP Verification Modal Popup -->
+<div class="modal-overlay" id="verify-modal">
+  <div class="modal-card">
+    <div class="modal-icon">📱</div>
+    <div class="modal-title">একাউন্ট ভেরিফিকেশন</div>
+    <div class="modal-desc">
+      নিরাপদ উইথড্রয়ালের জন্য আপনার মোবাইল নম্বরে ৪ ডিজিটের OTP পাঠানো হয়েছে। ডেমো পিন: <b>1234</b>
+    </div>
+    <input type="text" id="otp-input" placeholder="4-Digit Code (Enter 1234)" maxlength="4" style="text-align:center; font-size:18px; letter-spacing:4px;">
+    <button class="verify-submit-btn" onclick="confirmVerification()">Verify & Continue</button>
+    <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav" id="bottom-nav">
+  <div class="nav-item active" onclick="switchTab('home', this)">
+    <span class="nav-icon">🏠</span> Home
+  </div>
+  <div class="nav-item" onclick="switchTab('tasks', this)">
+    <span class="nav-icon">🎯</span> Tasks
+  </div>
+  <div class="nav-item" onclick="switchTab('withdraw', this)">
+    <span class="nav-icon">💳</span> Withdraw
+  </div>
+  <div class="nav-item" onclick="switchTab('profile', this)">
+    <span class="nav-icon">👤</span> Profile
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let balance = 0;
+let today = 0;
+let completed = 0;
+let currentUser = null;
+let isVerified = false;
+
+const SIGNUP_BONUS = 201; // Welcome Bonus Amount
+const MIN_WITHDRAW = 700;
+const MAX_DAILY_ADS = 20;
+const REWARD_PER_AD = 20;
+const AD_DURATION = 5; 
+
+const rewards = [50, 100, 200, 500, 750, 1000];
+let isSpinning = false;
+let currentRotation = 0;
+
+let userAdData = { count: 0, lastDate: new Date().toLocaleDateString() };
+let userSpinData = { count: 0, lastDate: new Date().toLocaleDateString() };
+
+window.addEventListener("load", function() {
+  createWheelLabels();
+  setTimeout(function() {
+    const loadingScreen = document.getElementById("loading-screen");
+    loadingScreen.style.opacity = "0";
+    setTimeout(() => {
+      loadingScreen.style.display = "none";
+      checkAuth();
+    }, 500);
+  }, 1500);
+});
+
+function createWheelLabels() {
+  const wheel = document.getElementById("wheel");
+  wheel.innerHTML = "";
+  const total = rewards.length;
+  const angleStep = 360 / total;
+
+  rewards.forEach((reward, index) => {
+    const label = document.createElement("div");
+    label.className = "slice-text";
+    const angle = index * angleStep + angleStep / 2;
+    label.style.transform = `rotate(${angle}deg) translate(80px) rotate(90deg)`;
+    label.innerText = "৳" + reward;
+    wheel.appendChild(label);
+  });
+}
+
+function checkAuth() {
+  const savedUser = localStorage.getItem("ug_user");
+  if(savedUser) {
+    currentUser = JSON.parse(savedUser);
+    showApp();
+  } else {
+    showAuth('signin');
+  }
+}
+
+function switchAuth(type) {
+  if(type === 'signup') {
+    document.getElementById("signin-box").style.display = "none";
+    document.getElementById("signup-box").style.display = "block";
+  } else {
+    document.getElementById("signup-box").style.display = "none";
+    document.getElementById("signin-box").style.display = "block";
+  }
+}
+
+function showAuth(type) {
+  document.getElementById("main-header").style.display = "none";
+  document.getElementById("bottom-nav").style.display = "none";
+  hideAllPages();
+  switchAuth(type);
+}
+
+function handleSignUp() {
+  const name = document.getElementById("signup-name").value.trim();
+  const phone = document.getElementById("signup-phone").value.trim();
+  const password = document.getElementById("signup-password").value.trim();
+
+  if(!name || !phone || !password) {
+    showToast("সবগুলো তথ্য সঠিকভাবে পূরণ করুন");
+    return;
+  }
+
+  const userList = JSON.parse(localStorage.getItem("ug_all_users") || "[]");
+  if(userList.some(u => u.phone === phone)) {
+    showToast("এই ফোন নম্বর দিয়ে আগে থেকেই একাউন্ট খোলা আছে!");
+    return;
+  }
+
+  currentUser = { name, phone, password, joined: new Date().toLocaleDateString('bn-BD') };
+  localStorage.setItem("ug_user", JSON.stringify(currentUser));
+  
+  userList.push(currentUser);
+  localStorage.setItem("ug_all_users", JSON.stringify(userList));
+
+  // Initialize Account with 201 Taka Bonus
+  balance = SIGNUP_BONUS;
+  today = 0;
+  completed = 0;
+  isVerified = false;
+
+  saveUserData();
+  addHistory(SIGNUP_BONUS, "🎁 Sign Up Bonus");
+
+  showToast("অভিনন্দন! ৳২০১ বোনাস যোগ হয়েছে!");
+  showApp();
+}
+
+function handleSignIn() {
+  const phone = document.getElementById("signin-phone").value.trim();
+  const password = document.getElementById("signin-password").value.trim();
+  const userList = JSON.parse(localStorage.getItem("ug_all_users") || "[]");
+
+  if(!phone || !password) {
+    showToast("ফোন নম্বর এবং পাসওয়ার্ড দিন");
+    return;
+  }
+
+  const foundUser = userList.find(u => u.phone === phone && u.password === password);
+  if(foundUser) {
+    currentUser = foundUser;
+    localStorage.setItem("ug_user", JSON.stringify(currentUser));
+    showToast("স্বাগতম!");
+    showApp();
+    return;
+  }
+
+  showToast("ফোন নম্বর বা পাসওয়ার্ড ভুল!");
+}
+
+function handleLogout() {
+  localStorage.removeItem("ug_user");
+  currentUser = null;
+  showToast("লগআউট সফল হয়েছে");
+  showAuth('signin');
+}
+
+function showApp() {
+  document.getElementById("signin-box").style.display = "none";
+  document.getElementById("signup-box").style.display = "none";
+  document.getElementById("main-header").style.display = "block";
+  document.getElementById("bottom-nav").style.display = "flex";
+
+  document.getElementById("user-display-name").innerText = currentUser.name || "User";
+  document.getElementById("user-display-phone").innerText = currentUser.phone || "";
+  document.getElementById("user-joined-date").innerText = currentUser.joined || "Recent";
+
+  loadUserData();
+  switchTab('home', document.querySelectorAll('.nav-item')[0]);
+}
+
+function loadUserData() {
+  const todayDate = new Date().toLocaleDateString();
+
+  const savedAccountData = localStorage.getItem("ug_account_" + currentUser.phone);
+  if(savedAccountData) {
+    const accountData = JSON.parse(savedAccountData);
+    balance = (accountData.balance !== undefined) ? accountData.balance : SIGNUP_BONUS;
+    completed = accountData.completed || 0;
+    today = (accountData.lastDate === todayDate) ? (accountData.today || 0) : 0;
+    isVerified = accountData.isVerified || false;
+  } else {
+    balance = SIGNUP_BONUS;
+    today = 0; completed = 0; isVerified = false;
+  }
+
+  const storedAdData = localStorage.getItem("ug_ad_data_" + currentUser.phone);
+  if(storedAdData) {
+    const parsed = JSON.parse(storedAdData);
+    userAdData = (parsed.lastDate === todayDate) ? parsed : { count: 0, lastDate: todayDate };
+  } else {
+    userAdData = { count: 0, lastDate: todayDate };
+  }
+
+  const storedSpinData = localStorage.getItem("ug_spin_data_" + currentUser.phone);
+  if(storedSpinData) {
+    const parsedSpin = JSON.parse(storedSpinData);
+    userSpinData = (parsedSpin.lastDate === todayDate) ? parsedSpin : { count: 0, lastDate: todayDate };
+  } else {
+    userSpinData = { count: 0, lastDate: todayDate };
+  }
+
+  saveUserData();
+  updateUI();
+}
+
+function saveUserData() {
+  const todayDate = new Date().toLocaleDateString();
+  const accountData = { balance, today, completed, lastDate: todayDate, isVerified };
+  
+  localStorage.setItem("ug_account_" + currentUser.phone, JSON.stringify(accountData));
+  localStorage.setItem("ug_ad_data_" + currentUser.phone, JSON.stringify(userAdData));
+  localStorage.setItem("ug_spin_data_" + currentUser.phone, JSON.stringify(userSpinData));
+}
+
+function updateUI() {
+  document.getElementById("balance").innerText = balance.toFixed(2);
+  document.getElementById("today").innerText = today.toFixed(2);
+  document.getElementById("completed").innerText = completed;
+
+  const maxLimit = (balance > MIN_WITHDRAW) ? balance : MIN_WITHDRAW;
+  document.getElementById("max-limit-text").innerText = maxLimit.toFixed(2);
+
+  const statusText = document.getElementById("verify-status-text");
+  if(isVerified) {
+    statusText.innerText = "Verified ✅";
+    statusText.style.color = "#087f5b";
+  } else {
+    statusText.innerText = "Unverified ⚠️";
+    statusText.style.color = "#d97706";
+  }
+
+  const adButton = document.getElementById("ad-btn");
+  if(adButton) {
+    if(userAdData.count >= MAX_DAILY_ADS) {
+      adButton.disabled = true;
+      adButton.innerText = "Limit Reached (" + userAdData.count + "/" + MAX_DAILY_ADS + ")";
+    } else {
+      adButton.disabled = false;
+      adButton.innerText = "Earn ৳" + REWARD_PER_AD + " (" + userAdData.count + "/" + MAX_DAILY_ADS + ")";
+    }
+  }
+
+  const spinBtn = document.getElementById("spin-start-btn");
+  if(spinBtn) {
+    if(userSpinData.count >= 1) {
+      spinBtn.disabled = true;
+      spinBtn.innerText = "Spin Completed Today (1/1)";
+    } else {
+      spinBtn.disabled = false;
+      spinBtn.innerText = "Spin Now (0/1 Used)";
+    }
+  }
+}
+
+function hideAllPages() {
+  const pages = document.querySelectorAll('.app-page');
+  pages.forEach(page => page.classList.remove('active-page'));
+}
+
+function switchTab(pageName, element) {
+  hideAllPages();
+  document.getElementById("page-" + pageName).classList.add('active-page');
+  
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => item.classList.remove('active'));
+  if(element) element.classList.add('active');
+
+  updateUI();
+}
+
+function watchAd(button) {
+  if(userAdData.count >= MAX_DAILY_ADS) {
+    showToast("আজকের ২০টি এডের লিমিট শেষ!");
+    return;
+  }
+
+  button.disabled = true;
+  let timeLeft = AD_DURATION;
+  button.innerText = "Please wait (" + timeLeft + "s)";
+
+  const timer = setInterval(() => {
+    timeLeft--;
+    if (timeLeft > 0) {
+      button.innerText = "Please wait (" + timeLeft + "s)";
+    } else {
+      clearInterval(timer);
+
+      balance += REWARD_PER_AD;
+      today += REWARD_PER_AD;
+      completed++;
+      userAdData.count++;
+      saveUserData();
+
+      addHistory(REWARD_PER_AD, "🎯 Task Reward");
+      showToast("৳" + REWARD_PER_AD.toFixed(2) + " যোগ করা হয়েছে!");
+      updateUI();
+    }
+  }, 1000);
+}
+
+function startSpin() {
+  if (userSpinData.count >= 1) {
+    showToast("আজকের স্পিন লিমিট শেষ!");
+    return;
+  }
+  if (isSpinning) return;
+  isSpinning = true;
+
+  const spinBtn = document.getElementById("spin-start-btn");
+  spinBtn.disabled = true;
+  spinBtn.innerText = "Spinning...";
+
+  const selectedIndex = Math.floor(Math.random() * rewards.length);
+  const selectedReward = rewards[selectedIndex];
+
+  const segmentDegrees = 360 / rewards.length;
+  const targetDegree = 360 - (selectedIndex * segmentDegrees + segmentDegrees / 2);
+
+  const extraRotations = 5 * 360; 
+  currentRotation += extraRotations + (targetDegree - (currentRotation % 360));
+
+  const wheel = document.getElementById("wheel");
+  wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+  setTimeout(() => {
+    balance += selectedReward;
+    today += selectedReward;
+    completed++;
+
+    userSpinData.count++;
+    saveUserData();
+
+    addHistory(selectedReward, "🎡 Spin Reward");
+    showToast("🎉 অভিনন্দন! আপনি ৳" + selectedReward + " জিতেছেন!");
+
+    isSpinning = false;
+    updateUI();
+  }, 4000);
+}
+
+function addHistory(amount, typeName = "🎯 Reward Claimed"){
+  let history = document.getElementById("history");
+  if(history.innerText.includes("No earning yet")){
+    history.innerHTML = "";
+  }
+  let item = document.createElement("div");
+  item.className = "history-item";
+  item.innerHTML = "<span>" + typeName + "</span><span class='plus'>+৳" + amount.toFixed(2) + "</span>";
+  history.prepend(item);
+}
+
+function processWithdraw() {
+  let number = document.getElementById("number").value.trim();
+  let amount = Number(document.getElementById("withdrawAmount").value);
+  const maxLimit = (balance > MIN_WITHDRAW) ? balance : MIN_WITHDRAW;
+
+  if(!number){
+    showToast("Mobile number দিন");
+    return;
+  }
+  if(!amount || amount <= 0){
+    showToast("সঠিক amount দিন");
+    return;
+  }
+  if(amount < MIN_WITHDRAW){
+    showToast("মিনিমাম উইথড্র ৳" + MIN_WITHDRAW + " টাকা");
+    return;
+  }
+  if(amount > maxLimit || amount > balance){
+    showToast("আপনার ব্যালেন্স বা ম্যাক্সিমাম লিমিটের চেয়ে বেশি অ্যামাউন্ট তুলতে পারবেন না!");
+    return;
+  }
+
+  if(!isVerified) {
+    document.getElementById("verify-modal").style.display = "flex";
+  } else {
+    executeWithdraw(amount);
+  }
+}
+
+function confirmVerification() {
+  const otpVal = document.getElementById("otp-input").value.trim();
+  if(otpVal === "1234") {
+    isVerified = true;
+    saveUserData();
+    updateUI();
+    closeModal();
+    showToast("একাউন্ট ভেরিফিকেশন সফল হয়েছে!");
+    
+    let amount = Number(document.getElementById("withdrawAmount").value);
+    executeWithdraw(amount);
+  } else {
+    showToast("ভুল OTP কোড! (Demo OTP: 1234)");
+  }
+}
+
+function executeWithdraw(amount) {
+  balance -= amount;
+  saveUserData();
+  updateUI();
+  showToast("Withdrawal request submitted successfully!");
+  document.getElementById("withdrawAmount").value = "";
+}
+
+function closeModal() {
+  document.getElementById("verify-modal").style.display = "none";
+  document.getElementById("otp-input").value = "";
+}
+
+function showToast(message){
+  let toast = document.getElementById("toast");
+  toast.innerText = message;
+  toast.style.display = "block";
+  setTimeout(function(){
+    toast.style.display = "none";
+  },2200);
+}
+</script>
+
+</body>
+</html>

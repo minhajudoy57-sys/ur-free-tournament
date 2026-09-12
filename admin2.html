@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UG Income BD - Admin Panel</title>
+<style>
+  *{ box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+  body { background: #0f172a; color: #f8fafc; padding: 20px; }
+  .container { max-width: 650px; margin: auto; }
+  h2 { text-align: center; color: #10b981; margin-bottom: 20px; }
+  
+  .login-card, .admin-card {
+    background: #1e293b; padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  }
+  
+  input { 
+    width: 100%; padding: 12px 15px; margin: 8px 0 15px; 
+    border: 1px solid #334155; background: #0f172a; color: white; 
+    border-radius: 10px; outline: none; font-size: 14px;
+  }
+  
+  button { 
+    width: 100%; padding: 12px; background: #10b981; border: 0; 
+    color: white; font-weight: bold; border-radius: 10px; cursor: pointer; 
+  }
+  button:hover { background: #059669; }
+  
+  .user-card {
+    background: #334155; padding: 16px; border-radius: 12px; margin-bottom: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .user-info b { font-size: 16px; color: #fff; display: block; }
+  .user-info span { font-size: 13px; color: #94a3b8; }
+  .user-info .bal { color: #34d399; font-weight: bold; margin-top: 5px; font-size: 15px; }
+  .add-btn { width: auto; padding: 8px 14px; font-size: 13px; background: #10b981; }
+  .refresh-btn { background: #3b82f6; margin-bottom: 15px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>⚙️ Central Admin Control Panel</h2>
+
+  <!-- Admin Login -->
+  <div class="login-card" id="admin-login-box">
+    <h3 style="margin-bottom: 10px; text-align: center;">অ্যাডমিন লগইন</h3>
+    <input type="password" id="admin-pass" placeholder="Enter Admin Password (Default: admin123)">
+    <button onclick="loginAdmin()">Login Control Panel</button>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div class="admin-card" id="admin-dashboard" style="display: none;">
+    <button class="refresh-btn" onclick="loadRegisteredUsers()">🔄 রিফ্রেশ ইউজার তালিকা</button>
+    <input type="text" id="search-input" onkeyup="searchUsers()" placeholder="🔍 ইউজার ফোন নম্বর দিয়ে খুঁজুন...">
+
+    <h3 style="margin-bottom: 15px; border-bottom: 1px solid #475569; padding-bottom: 8px;">
+      নিবন্ধিত ইউজারদের তালিকা (<span id="total-users">0</span>)
+    </h3>
+
+    <div id="user-list"></div>
+    <button style="background: #ef4444; margin-top: 20px;" onclick="logoutAdmin()">Logout</button>
+  </div>
+</div>
+
+<script>
+  let allUsersCache = [];
+
+  function loginAdmin() {
+    const pass = document.getElementById("admin-pass").value;
+    if(pass === "admin123") {
+      document.getElementById("admin-login-box").style.display = "none";
+      document.getElementById("admin-dashboard").style.display = "block";
+      loadRegisteredUsers();
+    } else {
+      alert("ভুল পাসওয়ার্ড!");
+    }
+  }
+
+  function logoutAdmin() {
+    document.getElementById("admin-login-box").style.display = "block";
+    document.getElementById("admin-dashboard").style.display = "none";
+    document.getElementById("admin-pass").value = "";
+  }
+
+  function loadRegisteredUsers() {
+    const userListDiv = document.getElementById("user-list");
+    userListDiv.innerHTML = "";
+    
+    // Read user list saved by index.html
+    allUsersCache = JSON.parse(localStorage.getItem("ug_all_users") || "[]");
+    document.getElementById("total-users").innerText = allUsersCache.length;
+
+    if(allUsersCache.length === 0) {
+      userListDiv.innerHTML = "<p style='color:#94a3b8; text-align:center;'>এখনো কোনো ইউজার একাউন্ট তৈরি করেনি!</p>";
+      return;
+    }
+
+    renderUserCards(allUsersCache);
+  }
+
+  function renderUserCards(users) {
+    const userListDiv = document.getElementById("user-list");
+    userListDiv.innerHTML = "";
+
+    users.forEach(user => {
+      const userAccount = JSON.parse(localStorage.getItem("ug_account_" + user.phone) || '{"balance":201}');
+      const currentBalance = (userAccount.balance !== undefined ? userAccount.balance : 201);
+      
+      const item = document.createElement("div");
+      item.className = "user-card";
+      item.innerHTML = `
+        <div class="user-info">
+          <b>👤 ${user.name}</b>
+          <span>📱 Phone: ${user.phone}</span>
+          <div class="bal">ব্যালেন্স: ৳${currentBalance.toFixed(2)}</div>
+        </div>
+        <button class="add-btn" onclick="addMoney('${user.phone}', '${user.name}')">+ Add Balance</button>
+      `;
+      userListDiv.appendChild(item);
+    });
+  }
+
+  function addMoney(phone, name) {
+    const amountStr = prompt(`${name} (${phone})-এর একাউন্টে কত টাকা যোগ করতে চান?`);
+    if (amountStr === null) return;
+    
+    const amount = Number(amountStr);
+    if(isNaN(amount) || amount <= 0) {
+      alert("সঠিক টাকার পরিমাণ ইনপুট দিন!");
+      return;
+    }
+
+    let userAccount = JSON.parse(localStorage.getItem("ug_account_" + phone) || '{"balance":201, "today":0, "completed":0}');
+    userAccount.balance = (userAccount.balance || 0) + amount;
+
+    // Direct update to local database
+    localStorage.setItem("ug_account_" + phone, JSON.stringify(userAccount));
+    
+    alert(`সফলভাবে ${name}-এর একাউন্টে ৳${amount} যোগ করা হয়েছে!`);
+    loadRegisteredUsers();
+  }
+
+  function searchUsers() {
+    const query = document.getElementById("search-input").value.trim().toLowerCase();
+    const filtered = allUsersCache.filter(u => 
+      u.phone.toLowerCase().includes(query) || u.name.toLowerCase().includes(query)
+    );
+    renderUserCards(filtered);
+  }
+</script>
+
+</body>
+</html>
