@@ -4,116 +4,135 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Udoy Rakin Free Tournament</title>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--white:#fff;--black:#080808;--ink:#111;--gray:#f2f2f2;--line:#ddd;--muted:#777}
-html,body{width:100%;min-height:100%;margin:0;padding:0}body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:#111;min-height:100vh;overflow-x:hidden}
-button,input{font:inherit}button{cursor:pointer}
-.splash{position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;z-index:50;animation:hide 1s ease 2.5s forwards}
-.splashBox{text-align:center}.logo{width:82px;height:82px;background:#080808;color:#fff;border-radius:24px;display:grid;place-items:center;font-weight:900;font-size:28px;margin:auto;box-shadow:0 15px 35px #bbb}
-.splash h1{font-size:25px;margin-top:18px}.splash p{color:#777;margin-top:7px}.bar{width:180px;height:4px;background:#ddd;margin:25px auto 0;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:#080808;animation:load 2.3s ease}
-@keyframes load{from{width:0}to{width:100%}}@keyframes hide{to{opacity:0;visibility:hidden;pointer-events:none}}
-.login{position:fixed;inset:0;z-index:40;min-height:100dvh;height:100dvh;display:grid;place-items:center;padding:25px;background:#fff;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.login.hidden{display:none!important}.app.visible{display:block!important}
-.loginCard{width:min(420px,100%);background:#080808;color:#fff;border-radius:28px;padding:30px;box-shadow:0 20px 50px #bbb}
-.brand{font-size:12px;letter-spacing:3px;font-weight:bold;color:#aaa}.loginCard h2{font-size:30px;margin:10px 0 7px}.loginCard p{color:#aaa;font-size:14px;margin-bottom:25px}
-.field{margin:12px 0}.field label{display:block;color:#aaa;font-size:12px;margin-bottom:7px}.field input{width:100%;padding:14px 15px;border:1px solid #333;border-radius:13px;background:#151515;color:#fff;outline:none}.field input:focus{border-color:#fff}
-.btn{border:0;border-radius:13px;padding:14px;width:100%;font-weight:800;margin-top:8px}.primary{background:#fff;color:#080808}.outline{background:#080808;color:#fff;border:1px solid #444}.switch{text-align:center;margin-top:18px;color:#aaa;font-size:13px}.switch b{color:#fff;cursor:pointer}
-.app{display:none;min-height:100vh;background:#fff;padding-bottom:78px}.app.visible{display:block!important}.top{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid #e6e6e6;padding:15px 17px;display:flex;justify-content:space-between;align-items:center}.top h2{font-size:18px}.top small{color:#777}
-.avatar{width:42px;height:42px;border-radius:14px;background:#080808;color:#fff;display:grid;place-items:center;font-weight:900;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}
-.wrap{max-width:760px;margin:auto;padding:18px}
-.hero{background:#080808;color:#fff;border-radius:27px;padding:24px;position:relative;overflow:hidden;box-shadow:0 16px 35px #ccc}.hero:after{content:"UR";position:absolute;right:-15px;bottom:-38px;font-size:130px;font-weight:900;color:#151515}.hero>*{position:relative;z-index:1}.eyebrow{font-size:11px;letter-spacing:2px;color:#aaa;font-weight:bold}.hero h1{font-size:28px;margin:10px 0}.hero p{color:#bbb;font-size:13px;line-height:1.6;max-width:520px}.heroBtns{display:flex;gap:9px;margin-top:18px}.heroBtns button{width:auto;padding:12px 16px}
-.sectionTitle{display:flex;justify-content:space-between;align-items:center;margin:25px 2px 12px}.sectionTitle h3{font-size:18px}.sectionTitle span{font-size:12px;color:#777}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:#080808;color:#fff;border-radius:18px;padding:17px}.stat b{font-size:25px}.stat span{display:block;color:#aaa;font-size:11px;margin-top:5px}
-.card{background:#fff;border:1px solid #ddd;border-radius:20px;padding:15px;margin-bottom:11px;box-shadow:0 5px 18px #eee}.blackCard{background:#080808;color:#fff;border:0;box-shadow:0 10px 25px #ccc}
-.match{display:flex;align-items:center;justify-content:space-between;gap:10px}.player{text-align:center;flex:1}.miniAvatar{width:44px;height:44px;border-radius:14px;background:#080808;color:#fff;display:grid;place-items:center;font-weight:bold;margin:auto auto 7px}.blackCard .miniAvatar{background:#fff;color:#080808}.vs{font-size:11px;color:#888;font-weight:bold}.blackCard .vs{color:#aaa}.status{display:inline-block;font-size:10px;padding:5px 8px;border-radius:99px;background:#eee;margin-bottom:10px;color:#111}.blackCard .status{background:#fff}
-.playerRow{display:flex;align-items:center;gap:12px}.playerInfo{flex:1}.playerInfo b{display:block}.playerInfo small{color:#888}.pts{background:#080808;color:#fff;padding:8px 11px;border-radius:12px;font-weight:800}.blackCard .pts{background:#fff;color:#080808}
-.notice{border-left:4px solid #080808;padding-left:12px}.notice b{display:block}.notice small{color:#777;line-height:1.5}
-.admin{display:flex;gap:13px;align-items:center}.adminPic{width:58px;height:58px;border-radius:17px;background:#080808;color:#fff;display:grid;place-items:center;font-weight:900;overflow:hidden}.adminPic img{width:100%;height:100%;object-fit:cover}.admin small{color:#777}
-.table{overflow:hidden;border:1px solid #ddd;border-radius:18px}.tr{display:grid;grid-template-columns:40px 1fr 38px 38px 48px;padding:13px;border-bottom:1px solid #eee;font-size:12px;align-items:center}.tr:last-child{border-bottom:0}.th{background:#080808;color:#fff;font-weight:bold}.tr b{font-size:13px}.rank{font-weight:900}
-.page{display:none}.page.active{display:block}
-.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;display:flex;justify-content:center;z-index:20}.nav{max-width:760px;width:100%;display:grid;grid-template-columns:repeat(5,1fr)}.nav button{border:0;background:#fff;padding:11px 3px 9px;color:#888;font-size:10px}.nav button b{display:block;font-size:18px;margin-bottom:3px;color:#999}.nav button.active{color:#080808;font-weight:bold}.nav button.active b{color:#080808}
-.profileBox{text-align:center;background:#080808;color:#fff;border-radius:25px;padding:25px}.profileBig{width:86px;height:86px;border-radius:26px;background:#fff;color:#080808;display:grid;place-items:center;font-size:28px;font-weight:900;margin:auto;overflow:hidden}.profileBig img{width:100%;height:100%;object-fit:cover}.upload{margin-top:13px;background:#fff;color:#080808;border:0;padding:10px 15px;border-radius:11px;font-weight:bold;font-size:12px}
-.empty{text-align:center;padding:30px;color:#888}
-@media(max-width:430px){.wrap{padding:14px}.hero h1{font-size:24px}.stat{padding:14px}.stat b{font-size:21px}.tr{grid-template-columns:32px 1fr 34px 34px 42px;padding:11px 9px}}
-</style>
-</head>
-<body>
 
-<div class="splash"><div class="splashBox"><div class="logo">UR</div><h1>Udoy Rakin</h1><p>Free Tournament</p><div class="bar"><i></i></div></div></div>
+:root{
+--white:#fff;
+--black:#080808;
+--ink:#111;
+--gray:#f2f2f2;
+--line:#ddd;
+--muted:#777
+}
 
-<section class="login" id="login">
-<div class="loginCard">
-<div class="brand">TEAM UR • ESPORTS</div>
-<h2 id="authTitle">Welcome Back</h2>
-<p id="authSub">Login to enter the tournament app.</p>
-<div class="field"><label>Email</label><input id="email" type="email" placeholder="Enter your email"></div>
-<div class="field"><label>Password</label><input id="pass" type="password" placeholder="Enter password"></div>
-<button class="btn primary" onclick="auth()">LOGIN</button>
-<button class="btn outline" onclick="demoGoogle()">Continue with Google</button>
-<div class="switch" id="switch">Don't have an account? <b onclick="toggleAuth()">Sign Up</b></div>
-</div>
-</section>
+html,body{
+margin:0;
+padding:0;
+width:100%;
+min-height:100%;
+overflow-x:hidden;
+}
 
-<main class="app" id="app">
-<header class="top"><div><h2>Udoy Rakin Free Tournament</h2><small>e-Football Team UR</small></div><div class="avatar" id="headAvatar">UR</div></header>
+body{
+font-family:Arial,Helvetica,sans-serif;
+background:#fff;
+color:#111;
+min-height:100vh;
+}
 
-<div class="wrap">
-<section class="page active" id="home">
-<div class="hero"><div class="eyebrow">WELCOME TO TEAM UR</div><h1>Udoy Rakin Free Tournament</h1><p>Play fair. Win smart. Build your record. Follow matches, players, points and tournament notices from one place.</p><div class="heroBtns"><button class="btn primary" onclick="go('matches')">View Matches</button><button class="btn outline" onclick="go('profile')">My Profile</button></div></div>
-<div class="sectionTitle"><h3>Overview</h3><span>Live data</span></div><div class="grid"><div class="stat"><b id="sPlayers">0</b><span>PLAYERS</span></div><div class="stat"><b id="sMatches">0</b><span>MATCHES</span></div><div class="stat"><b id="sWins">0</b><span>TOTAL WINS</span></div></div>
-<div class="sectionTitle"><h3>Upcoming Matches</h3><span onclick="go('matches')">View all</span></div><div id="homeMatches"></div>
-<div class="sectionTitle"><h3>Latest Notice</h3></div><div id="homeNotice"></div>
-</section>
+button,input{font:inherit}
+button{cursor:pointer}
 
-<section class="page" id="matches"><div class="sectionTitle"><h3>Matches</h3><span id="matchCount"></span></div><div id="matchList"></div></section>
+.splash{
+position:fixed;
+inset:0;
+background:#fff;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:50;
+animation:hide 1s ease 2.5s forwards
+}
 
-<section class="page" id="players"><div class="sectionTitle"><h3>Player Profiles</h3><span>W / D / L / PTS</span></div><div id="playerList"></div></section>
+.splashBox{text-align:center}
 
-<section class="page" id="points"><div class="sectionTitle"><h3>Points Table</h3><span>Rankings</span></div><div class="table"><div class="tr th"><span>#</span><span>PLAYER</span><span>M</span><span>W</span><span>PTS</span></div><div id="pointRows"></div></div></section>
+.logo{
+width:82px;
+height:82px;
+background:#080808;
+color:#fff;
+border-radius:24px;
+display:grid;
+place-items:center;
+font-weight:900;
+font-size:28px;
+margin:auto;
+box-shadow:0 15px 35px #bbb
+}
 
-<section class="page" id="admins"><div class="sectionTitle"><h3>Admin Team</h3><span>Official</span></div><div id="adminList"></div></section>
+.splash h1{
+font-size:25px;
+margin-top:18px
+}
 
-<section class="page" id="profile"><div class="profileBox"><div class="profileBig" id="profileAvatar">UR</div><h2 id="profileName" style="margin-top:12px">Player</h2><p style="color:#aaa;font-size:12px;margin-top:5px">Udoy Rakin Free Tournament</p><input id="photoInput" type="file" accept="image/*" hidden onchange="uploadPhoto(this)"><button class="upload" onclick="photoInput.click()">Change Profile Photo</button></div><div class="sectionTitle"><h3>My Statistics</h3></div><div id="myStats"></div><button class="btn" style="background:#080808;color:#fff;margin-top:18px" onclick="logout()">LOG OUT</button></section>
-</div>
+.splash p{
+color:#777;
+margin-top:7px
+}
 
-<nav class="bottom"><div class="nav">
-<button class="active" onclick="go('home')"><b>⌂</b>Home</button>
-<button onclick="go('matches')"><b>⚽</b>Matches</button>
-<button onclick="go('players')"><b>♟</b>Players</button>
-<button onclick="go('points')"><b>🏆</b>Points</button>
-<button onclick="go('admins')"><b>☰</b>More</button>
-</div></nav>
-</main>
+.bar{
+width:180px;
+height:4px;
+background:#ddd;
+margin:25px auto 0;
+border-radius:9px;
+overflow:hidden
+}
 
-<script>
-const DATA="UR_TOURNAMENT_SHARED_MONO_V4";
-const ACC="UR_PLAYER_ACCOUNTS_V3";
-const SES="UR_PLAYER_SESSION_V3";
-let signup=false;
-const seed={players:[
-{name:"Udoy Rakin",uid:"UR001",points:0,matches:0,wins:0,draws:0,losses:0}
-],matches:[],admins:[{name:"Udoy Rakin",role:"Founder & Admin",bio:"Official Tournament Administrator",photo:""}],notices:[]};
-function getData(){try{return JSON.parse(localStorage.getItem(DATA))||seed}catch(e){return seed}}
-function saveData(d){localStorage.setItem(DATA,JSON.stringify(d))}
-if(!localStorage.getItem(DATA))saveData(seed);
-function toggleAuth(){signup=!signup;document.getElementById("authTitle").textContent=signup?"Create Account":"Welcome Back";document.getElementById("authSub").textContent=signup?"Create your player account.":"Login to enter the tournament app.";document.querySelector(".loginCard .primary").textContent=signup?"SIGN UP":"LOGIN";switcher();document.getElementById("email").focus()}
-function switcher(){document.getElementById("switch").innerHTML=signup?'Already have an account? <b onclick="toggleAuth()">Login</b>':'Don\'t have an account? <b onclick="toggleAuth()">Sign Up</b>'}
-function auth(){let e=email.value.trim(),p=pass.value;if(!e||!p)return alert("Email and password required.");let a=JSON.parse(localStorage.getItem(ACC)||"[]");if(signup){if(a.some(x=>x.email===e))return alert("Account already exists.");a.push({email:e,password:p,name:e.split("@")[0]});localStorage.setItem(ACC,JSON.stringify(a));localStorage.setItem(SES,e);ensurePlayer(e.split("@")[0]);openApp()}else{let u=a.find(x=>x.email===e&&x.password===p);if(!u)return alert("Wrong email or password.");localStorage.setItem(SES,e);ensurePlayer(u.name);openApp()}}
-function demoGoogle(){alert("Google login is a demo button in this offline HTML. Use Sign Up/Login for the local app.")}
-function ensurePlayer(name){let d=getData();if(!d.players.some(p=>p.name.toLowerCase()===name.toLowerCase()))d.players.push({name,uid:"UR"+String(Date.now()).slice(-5),points:0,matches:0,wins:0,draws:0,losses:0});saveData(d)}
-function openApp(){document.getElementById("login").classList.add("hidden");document.getElementById("app").classList.add("visible");document.body.classList.remove("auth-mode");window.scrollTo(0,0);refresh()}
-function go(id){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));let n=["home","matches","players","points","admins"].indexOf(id);if(n>=0)document.querySelectorAll(".nav button")[n].classList.add("active");refresh()}
-function refresh(){let d=getData(),me=localStorage.getItem(SES)||"",acc=JSON.parse(localStorage.getItem(ACC)||"[]").find(x=>x.email===me),name=acc?acc.name:"Player";sPlayers.textContent=d.players.length;sMatches.textContent=d.matches.length;sWins.textContent=d.players.reduce((a,p)=>a+p.wins,0);profileName.textContent=name;renderMatches(d);renderPlayers(d);renderPoints(d);renderAdmins(d);renderNotice(d);let mep=d.players.find(p=>p.name.toLowerCase()===name.toLowerCase())||d.players[0];myStats.innerHTML=mep?`<div class="card blackCard"><div class="grid"><div><b>${mep.matches}</b><small style="display:block;color:#aaa">MATCH</small></div><div><b>${mep.wins}</b><small style="display:block;color:#aaa">WIN</small></div><div><b>${mep.points}</b><small style="display:block;color:#aaa">POINTS</small></div></div></div>`:"";headAvatar.innerHTML=mep&&mep.photo?`<img src="${mep.photo}">`:"UR";profileAvatar.innerHTML=mep&&mep.photo?`<img src="${mep.photo}">`:"UR"}
-function renderMatches(d){matchCount.textContent=d.matches.length+" total";let html=d.matches.map(m=>`<div class="card blackCard"><div style="display:flex;justify-content:space-between;align-items:center"><span class="status">${m.status||"Upcoming"}</span><small style="color:#aaa">${m.date||""}</small></div><div class="match"><div class="player"><div class="miniAvatar">${initial(m.a)}</div><b>${m.a}</b></div><div class="vs">VS<br><strong>${m.scoreA??"-"} : ${m.scoreB??"-"}</strong></div><div class="player"><div class="miniAvatar">${initial(m.b)}</div><b>${m.b}</b></div></div></div>`).join("");matchList.innerHTML=html||`<div class="card empty">No matches yet.<br>Admin can create matches.</div>`;homeMatches.innerHTML=d.matches.slice(0,2).map(m=>`<div class="card"><div class="match"><div class="player"><b>${m.a}</b></div><div class="vs">VS</div><div class="player"><b>${m.b}</b></div></div><small style="display:block;text-align:center;color:#777;margin-top:9px">${m.date||"Schedule pending"}</small></div>`).join("")||`<div class="card empty">No upcoming match</div>`}
-function renderPlayers(d){playerList.innerHTML=d.players.map(p=>`<div class="card"><div class="playerRow"><div class="miniAvatar">${initial(p.name)}</div><div class="playerInfo"><b>${p.name}</b><small>${p.uid||"Player"}</small></div><div class="pts">${p.points} PTS</div></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:13px;text-align:center;font-size:11px"><span>M<br><b>${p.matches}</b></span><span>W<br><b>${p.wins}</b></span><span>D<br><b>${p.draws}</b></span><span>L<br><b>${p.losses}</b></span></div></div>`).join("")||`<div class="card empty">No players yet.</div>`}
-function renderPoints(d){let ps=[...d.players].sort((a,b)=>b.points-a.points);pointRows.innerHTML=ps.map((p,i)=>`<div class="tr"><span class="rank">${i+1}</span><span><b>${p.name}</b></span><span>${p.matches}</span><span>${p.wins}</span><span><b>${p.points}</b></span></div>`).join("")}
-function renderAdmins(d){adminList.innerHTML=d.admins.map(a=>`<div class="card"><div class="admin"><div class="adminPic">${a.photo?`<img src="${a.photo}">`:"UR"}</div><div><b>${a.name}</b><br><small>${a.role}</small><br><small>${a.bio}</small></div></div></div>`).join("")||`<div class="card empty">No admin information.</div>`}
-function renderNotice(d){let n=d.notices[0];homeNotice.innerHTML=n?`<div class="card"><div class="notice"><b>${n.title}</b><small>${n.text}</small></div></div>`:`<div class="card empty">No notice posted yet.</div>`}
-function initial(s){return (s||"UR").split(" ").map(x=>x[0]).join("").slice(0,2).toUpperCase()}
-function uploadPhoto(inp){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{let d=getData(),me=localStorage.getItem(SES),a=JSON.parse(localStorage.getItem(ACC)||"[]").find(x=>x.email===me),p=d.players.find(x=>x.name.toLowerCase()===(a?a.name:"").toLowerCase());if(p){p.photo=r.result;saveData(d);refresh()}};r.readAsDataURL(f)}
-function logout(){localStorage.removeItem(SES);document.getElementById("app").classList.remove("visible");document.getElementById("login").classList.remove("hidden");document.body.classList.add("auth-mode");signup=false;switcher();document.getElementById("authTitle").textContent="Welcome Back";document.getElementById("authSub").textContent="Login to enter the tournament app.";document.getElementById("email").value="";document.getElementById("pass").value="";window.scrollTo(0,0)}
-document.body.classList.add("auth-mode");setTimeout(()=>{let s=localStorage.getItem(SES);if(s)openApp()},2600);
-window.addEventListener("focus",refresh);
-</script>
-</body>
-  </html>
+.bar i{
+display:block;
+height:100%;
+background:#080808;
+animation:load 2.3s ease
+}
+
+@keyframes load{
+from{width:0}
+to{width:100%}
+}
+
+@keyframes hide{
+to{
+opacity:0;
+visibility:hidden;
+pointer-events:none
+}
+}
+
+/* LOGIN FIX */
+.login{
+position:fixed;
+inset:0;
+width:100%;
+height:100dvh;
+min-height:100vh;
+display:grid;
+place-items:center;
+padding:25px;
+background:#fff;
+overflow-y:auto;
+overflow-x:hidden;
+overscroll-behavior:contain;
+-webkit-overflow-scrolling:touch;
+z-index:40;
+}
+
+.loginCard{
+width:min(420px,100%);
+background:#080808;
+color:#fff;
+border-radius:28px;
+padding:30px;
+box-shadow:0 20px 50px #bbb
+}
+
+.brand{
+font-size:12px;
+letter-spacing:3px;
+font-weight:bold;
+color:#aaa
+}
+
+.loginCard h2{
