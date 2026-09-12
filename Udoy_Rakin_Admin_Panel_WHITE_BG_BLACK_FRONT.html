@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>UR Admin Panel</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:#111;min-height:100vh}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.login{min-height:100vh;display:grid;place-items:center;padding:22px;background:#fff}
+.loginBox{width:min(410px,100%);background:#080808;color:#fff;border-radius:28px;padding:30px;box-shadow:0 22px 55px #bbb}
+.logo{width:68px;height:68px;border-radius:20px;background:#fff;color:#080808;display:grid;place-items:center;font-size:24px;font-weight:900;margin-bottom:18px}
+.loginBox h1{font-size:27px}.loginBox p{color:#aaa;font-size:13px;margin:7px 0 22px}
+label{display:block;font-size:11px;color:#777;margin:12px 0 6px;font-weight:bold}
+.loginBox label{color:#aaa}
+input,select,textarea{width:100%;padding:13px;border:1px solid #d5d5d5;border-radius:12px;background:#fff;color:#111;outline:0}
+.loginBox input{background:#151515;border-color:#333;color:#fff}
+textarea{min-height:85px;resize:vertical}
+.btn{border:0;border-radius:12px;padding:13px 16px;font-weight:800}.black{background:#080808;color:#fff}.white{background:#fff;color:#080808}.danger{background:#eee;color:#111}
+.loginBox .btn{width:100%;margin-top:14px}.app{display:none;min-height:100vh;background:#fff;padding-bottom:25px}
+header{background:#080808;color:#fff;padding:18px 16px;position:sticky;top:0;z-index:10;box-shadow:0 7px 20px #ccc}
+.head{max-width:850px;margin:auto;display:flex;align-items:center;justify-content:space-between}.head h2{font-size:18px}.head small{color:#aaa}
+.wrap{max-width:850px;margin:auto;padding:18px}
+.hero{background:#080808;color:#fff;border-radius:25px;padding:23px;margin-bottom:18px}.hero .tag{font-size:10px;letter-spacing:2px;color:#aaa}.hero h1{font-size:27px;margin:8px 0}.hero p{font-size:13px;color:#bbb;line-height:1.55}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.stat{background:#080808;color:#fff;border-radius:17px;padding:15px}.stat b{font-size:23px}.stat span{display:block;color:#aaa;font-size:10px;margin-top:5px}
+.tabs{display:flex;gap:7px;overflow:auto;padding:3px 0 15px}.tabs button{white-space:nowrap;border:1px solid #ddd;background:#fff;padding:10px 13px;border-radius:12px;font-size:12px}.tabs button.active{background:#080808;color:#fff;border-color:#080808}
+.panel{display:none}.panel.active{display:block}.card{background:#fff;border:1px solid #ddd;border-radius:19px;padding:17px;margin-bottom:12px;box-shadow:0 5px 17px #eee}.card h3{font-size:17px;margin-bottom:13px}
+.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}
+.listItem{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #eee}.listItem:last-child{border-bottom:0}.circle{width:45px;height:45px;border-radius:14px;background:#080808;color:#fff;display:grid;place-items:center;font-weight:900;overflow:hidden;flex:none}.circle img{width:100%;height:100%;object-fit:cover}.info{flex:1}.info b{display:block}.info small{color:#777}.badge{background:#080808;color:#fff;border-radius:9px;padding:7px 9px;font-size:11px;font-weight:bold}
+.matchCard{background:#080808;color:#fff;border-radius:19px;padding:16px;margin-bottom:11px}.matchTop{display:flex;justify-content:space-between;gap:8px;color:#aaa;font-size:11px}.matchPlayers{display:grid;grid-template-columns:1fr 60px 1fr;align-items:center;text-align:center;margin-top:14px}.vs{color:#aaa;font-size:11px}.score{font-size:17px;font-weight:900;color:#fff;margin-top:4px}
+.notice{border-left:4px solid #080808;padding-left:12px}.notice b{display:block;margin-bottom:5px}.notice small{color:#777;line-height:1.5}
+.empty{text-align:center;color:#888;padding:25px}
+.photoPreview{width:80px;height:80px;border-radius:22px;background:#080808;color:#fff;display:grid;place-items:center;overflow:hidden;font-weight:900}.photoPreview img{width:100%;height:100%;object-fit:cover}
+hr{border:0;border-top:1px solid #eee;margin:16px 0}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.formGrid{grid-template-columns:1fr}.full{grid-column:auto}.wrap{padding:14px}}
+</style>
+</head>
+<body>
+
+<section class="login" id="login">
+<div class="loginBox">
+<div class="logo">UR</div>
+<h1>Admin Panel</h1>
+<p>Udoy Rakin Free Tournament • Secure Management</p>
+<label>Admin PIN</label>
+<input id="pin" type="password" inputmode="numeric" placeholder="Enter PIN">
+<button class="btn white" onclick="enterAdmin()">ENTER ADMIN PANEL</button>
+</div>
+</section>
+
+<main class="app" id="app">
+<header><div class="head"><div><h2>Udoy Rakin Free Tournament</h2><small>Administrator Dashboard</small></div><button class="btn white" onclick="logout()">Logout</button></div></header>
+<div class="wrap">
+<div class="hero"><div class="tag">TEAM UR • CONTROL CENTER</div><h1>Admin Dashboard</h1><p>Manage players, admins, matches, results and tournament notices. Data uses the same shared localStorage key as the Player/User app.</p></div>
+
+<div class="stats">
+<div class="stat"><b id="sp">0</b><span>PLAYERS</span></div><div class="stat"><b id="sm">0</b><span>MATCHES</span></div><div class="stat"><b id="sn">0</b><span>NOTICES</span></div><div class="stat"><b id="sa">0</b><span>ADMINS</span></div>
+</div>
+
+<div class="tabs">
+<button class="active" onclick="tab('players',this)">Players</button>
+<button onclick="tab('matches',this)">Matches</button>
+<button onclick="tab('admins',this)">Admins</button>
+<button onclick="tab('notices',this)">Notices</button>
+<button onclick="tab('data',this)">Data</button>
+</div>
+
+<section class="panel active" id="players">
+<div class="card"><h3>Add Player</h3><div class="formGrid">
+<div><label>Player Name</label><input id="pname" placeholder="e.g. Rakin"></div>
+<div><label>Player UID</label><input id="puid" placeholder="e.g. UR002"></div>
+<div class="full"><button class="btn black" onclick="addPlayer()">+ ADD PLAYER</button></div>
+</div></div>
+<div class="card"><h3>Player List</h3><div id="playerList"></div></div>
+</section>
+
+<section class="panel" id="matches">
+<div class="card"><h3>Create Match</h3><div class="formGrid">
+<div><label>Player A</label><select id="ma"></select></div>
+<div><label>Player B</label><select id="mb"></select></div>
+<div><div><label>Date & Time</label><input id="md" placeholder="e.g. 12 Sep • 9:00 PM"></div></div>
+<div><div><label>Status</label><select id="ms"><option>Upcoming</option><option>Live</option></select></div></div>
+<div class="full"><button class="btn black" onclick="addMatch()">+ CREATE MATCH</button></div>
+</div></div>
+<div class="card"><h3>Manage Matches & Results</h3><div id="matchList"></div></div>
+</section>
+
+<section class="panel" id="admins">
+<div class="card"><h3>Add Admin</h3><div class="formGrid">
+<div><label>Admin Name</label><input id="aname" placeholder="Admin name"></div>
+<div><label>Role</label><input id="arole" placeholder="Founder / Moderator"></div>
+<div class="full"><label>Bio</label><input id="abio" placeholder="Official Tournament Administrator"></div>
+<div><div class="row"><div class="photoPreview" id="adminPreview">UR</div><div><label>Admin Photo</label><input id="afile" type="file" accept="image/*" onchange="previewAdmin(this)"></div></div></div>
+<div class="full"><button class="btn black" onclick="addAdmin()">+ ADD ADMIN</button></div>
+</div></div>
+<div class="card"><h3>Admin List</h3><div id="adminList"></div></div>
+</section>
+
+<section class="panel" id="notices">
+<div class="card"><h3>Post Notice</h3><label>Notice Title</label><input id="ntitle" placeholder="Tournament Update"><label>Notice</label><textarea id="ntext" placeholder="Write announcement..."></textarea><button class="btn black" style="margin-top:12px" onclick="addNotice()">POST NOTICE</button></div>
+<div class="card"><h3>Posted Notices</h3><div id="noticeList"></div></div>
+</section>
+
+<section class="panel" id="data">
+<div class="card"><h3>Shared Data</h3><p style="color:#777;font-size:13px;line-height:1.5">Player app and this admin panel use the shared key <b>UR_TOURNAMENT_SHARED_MONO_V4</b>. Run both files in the same browser/HopWeb storage context for local sharing.</p><hr><button class="btn black" onclick="refresh()">↻ REFRESH DATA</button> <button class="btn danger" onclick="resetData()">RESET TO EMPTY TOURNAMENT</button></div>
+</section>
+</div>
+</main>
+
+<script>
+const DATA="UR_TOURNAMENT_SHARED_MONO_V4";
+const PIN="2026";
+const seed={players:[{name:"Udoy Rakin",uid:"UR001",points:0,matches:0,wins:0,draws:0,losses:0}],matches:[],admins:[{name:"Udoy Rakin",role:"Founder & Admin",bio:"Official Tournament Administrator",photo:""}],notices:[]};
+function get(){try{return JSON.parse(localStorage.getItem(DATA))||seed}catch(e){return seed}}
+function save(d){localStorage.setItem(DATA,JSON.stringify(d))}
+if(!localStorage.getItem(DATA))save(seed);
+function enterAdmin(){if(pin.value!==PIN)return alert("Wrong Admin PIN.");login.style.display="none";app.style.display="block";refresh()}
+function logout(){location.reload()}
+function tab(id,btn){document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));btn.classList.add("active");refresh()}
+function refresh(){let d=get();sp.textContent=d.players.length;sm.textContent=d.matches.length;sn.textContent=d.notices.length;sa.textContent=d.admins.length;renderPlayers(d);renderMatch(d);renderAdmins(d);renderNotices(d);fillSelects(d)}
+function addPlayer(){let n=pname.value.trim(),u=puid.value.trim()||("UR"+String(Date.now()).slice(-5));if(!n)return alert("Player name required.");let d=get();if(d.players.some(p=>p.name.toLowerCase()===n.toLowerCase()))return alert("Player already exists.");d.players.push({name:n,uid:u,points:0,matches:0,wins:0,draws:0,losses:0});save(d);pname.value="";puid.value="";refresh()}
+function removePlayer(i){if(!confirm("Delete this player?"))return;let d=get();d.players.splice(i,1);save(d);refresh()}
+function fillSelects(d){ma.innerHTML=d.players.map((p,i)=>`<option value="${i}">${p.name}</option>`).join("");mb.innerHTML=d.players.map((p,i)=>`<option value="${i}">${p.name}</option>`).join("")}
+function addMatch(){let d=get(),a=+ma.value,b=+mb.value;if(a===b)return alert("Choose two different players.");d.matches.unshift({a:d.players[a].name,b:d.players[b].name,date:md.value.trim()||"Schedule pending",status:ms.value,scoreA:null,scoreB:null,result:"pending"});save(d);md.value="";refresh()}
+function renderMatch(d){matchList.innerHTML=d.matches.map((m,i)=>`<div class="matchCard"><div class="matchTop"><span>${m.status||"Upcoming"}</span><span>${m.date||""}</span></div><div class="matchPlayers"><div><b>${m.a}</b></div><div><div class="vs">VS</div><div class="score">${m.scoreA??"-"} : ${m.scoreB??"-"}</div></div><div><b>${m.b}</b></div></div><div style="margin-top:14px;display:flex;gap:7px"><button class="btn white" style="flex:1" onclick="result(${i})">ENTER RESULT</button><button class="btn" style="background:#222;color:#fff" onclick="delMatch(${i})">DELETE</button></div></div>`).join("")||`<div class="empty">No matches created.</div>`}
+function result(i){let d=get(),m=d.matches[i],a=prompt("Score for "+m.a);if(a===null)return;let b=prompt("Score for "+m.b);if(b===null)return;a=Number(a);b=Number(b);if(!Number.isInteger(a)||!Number.isInteger(b)||a<0||b<0)return alert("Enter valid scores.");let pa=d.players.find(p=>p.name===m.a),pb=d.players.find(p=>p.name===m.b);if(!pa||!pb)return alert("Player not found.");if(m.result==="done")undoStats(pa,pb,m.scoreA,m.scoreB);m.scoreA=a;m.scoreB=b;m.status="Completed";m.result="done";pa.matches++;pb.matches++;if(a>b){pa.wins++;pb.losses++;pa.points+=3}else if(b>a){pb.wins++;pa.losses++;pb.points+=3}else{pa.draws++;pb.draws++;pa.points++;pb.points++}save(d);refresh()}
+function undoStats(pa,pb,a,b){pa.matches=Math.max(0,pa.matches-1);pb.matches=Math.max(0,pb.matches-1);if(a>b){pa.wins=Math.max(0,pa.wins-1);pb.losses=Math.max(0,pb.losses-1);pa.points=Math.max(0,pa.points-3)}else if(b>a){pb.wins=Math.max(0,pb.wins-1);pa.losses=Math.max(0,pa.losses-1);pb.points=Math.max(0,pb.points-3)}else{pa.draws=Math.max(0,pa.draws-1);pb.draws=Math.max(0,pb.draws-1);pa.points=Math.max(0,pa.points-1);pb.points=Math.max(0,pb.points-1)}}
+function delMatch(i){if(!confirm("Delete this match?"))return;let d=get(),m=d.matches[i];if(m.result==="done"){let a=d.players.find(p=>p.name===m.a),b=d.players.find(p=>p.name===m.b);if(a&&b)undoStats(a,b,m.scoreA,m.scoreB)}d.matches.splice(i,1);save(d);refresh()}
+function renderPlayers(d){playerList.innerHTML=d.players.map((p,i)=>`<div class="listItem"><div class="circle">${initial(p.name)}</div><div class="info"><b>${p.name}</b><small>${p.uid} • ${p.matches} matches • ${p.wins} wins</small></div><span class="badge">${p.points} PTS</span><button class="btn danger" onclick="removePlayer(${i})">×</button></div>`).join("")||`<div class="empty">No players.</div>`}
+let adminPhoto="";
+function previewAdmin(inp){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{adminPhoto=r.result;adminPreview.innerHTML=`<img src="${r.result}">`};r.readAsDataURL(f)}
+function addAdmin(){let n=aname.value.trim(),r=arole.value.trim(),b=abio.value.trim();if(!n)return alert("Admin name required.");let d=get();d.admins.push({name:n,role:r||"Admin",bio:b||"Official Tournament Administrator",photo:adminPhoto});save(d);aname.value="";arole.value="";abio.value="";adminPhoto="";adminPreview.textContent="UR";refresh()}
+function delAdmin(i){if(!confirm("Delete this admin?"))return;let d=get();d.admins.splice(i,1);save(d);refresh()}
+function renderAdmins(d){adminList.innerHTML=d.admins.map((a,i)=>`<div class="listItem"><div class="circle">${a.photo?`<img src="${a.photo}">`:"UR"}</div><div class="info"><b>${a.name}</b><small>${a.role}<br>${a.bio}</small></div><button class="btn danger" onclick="delAdmin(${i})">×</button></div>`).join("")||`<div class="empty">No admins.</div>`}
+function addNotice(){let t=ntitle.value.trim(),x=ntext.value.trim();if(!t||!x)return alert("Title and notice are required.");let d=get();d.notices.unshift({title:t,text:x,date:new Date().toLocaleString()});save(d);ntitle.value="";ntext.value="";refresh()}
+function delNotice(i){let d=get();d.notices.splice(i,1);save(d);refresh()}
+function renderNotices(d){noticeList.innerHTML=d.notices.map((n,i)=>`<div class="listItem"><div class="info"><b>${n.title}</b><small>${n.text}<br>${n.date||""}</small></div><button class="btn danger" onclick="delNotice(${i})">×</button></div>`).join("")||`<div class="empty">No notices.</div>`}
+function resetData(){if(!confirm("Reset all tournament data?"))return;save({players:[],matches:[],admins:[],notices:[]});refresh()}
+function initial(s){return (s||"UR").split(" ").map(x=>x[0]).join("").slice(0,2).toUpperCase()}
+window.addEventListener("focus",()=>{if(app.style.display==="block")refresh()});
+</script>
+</body>
+</html>
