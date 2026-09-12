@@ -2,137 +2,1845 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Udoy Rakin Free Tournament</title>
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+
+<meta name="theme-color" content="#0b0d12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<title>UR Free Tournament</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-
-:root{
---white:#fff;
---black:#080808;
---ink:#111;
---gray:#f2f2f2;
---line:#ddd;
---muted:#777
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
 }
 
 html,body{
-margin:0;
-padding:0;
-width:100%;
-min-height:100%;
-overflow-x:hidden;
+  margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+  background:#0b0d12;
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+  overscroll-behavior-y:none;
 }
 
 body{
-font-family:Arial,Helvetica,sans-serif;
-background:#fff;
-color:#111;
-min-height:100vh;
+  min-height:100dvh;
+  overflow-x:hidden;
+  overscroll-behavior:none;
 }
 
-button,input{font:inherit}
-button{cursor:pointer}
-
-.splash{
-position:fixed;
-inset:0;
-background:#fff;
-display:flex;
-align-items:center;
-justify-content:center;
-z-index:50;
-animation:hide 1s ease 2.5s forwards
+button,input{
+  font:inherit;
 }
 
-.splashBox{text-align:center}
+button{
+  cursor:pointer;
+  border:0;
+}
+
+.app{
+  width:100%;
+  max-width:520px;
+  min-height:100dvh;
+  margin:auto;
+  background:#10131a;
+  position:relative;
+  overflow:hidden;
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:#0b0d12;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.splashBox{
+  text-align:center;
+}
 
 .logo{
-width:82px;
-height:82px;
-background:#080808;
-color:#fff;
-border-radius:24px;
-display:grid;
-place-items:center;
-font-weight:900;
-font-size:28px;
-margin:auto;
-box-shadow:0 15px 35px #bbb
+  width:82px;
+  height:82px;
+  border-radius:24px;
+  background:linear-gradient(135deg,#fff,#888);
+  color:#0b0d12;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  font-weight:900;
+  margin:auto;
+  box-shadow:0 12px 40px #0008;
 }
 
-.splash h1{
-font-size:25px;
-margin-top:18px
+.splashTitle{
+  margin-top:18px;
+  font-size:25px;
+  font-weight:900;
 }
 
-.splash p{
-color:#777;
-margin-top:7px
+.loader{
+  width:120px;
+  height:4px;
+  background:#252a34;
+  border-radius:20px;
+  margin:20px auto 0;
+  overflow:hidden;
 }
 
-.bar{
-width:180px;
-height:4px;
-background:#ddd;
-margin:25px auto 0;
-border-radius:9px;
-overflow:hidden
-}
-
-.bar i{
-display:block;
-height:100%;
-background:#080808;
-animation:load 2.3s ease
+.loader span{
+  display:block;
+  width:40%;
+  height:100%;
+  background:#fff;
+  animation:load 1s infinite;
 }
 
 @keyframes load{
-from{width:0}
-to{width:100%}
+  from{transform:translateX(-120%)}
+  to{transform:translateX(350%)}
 }
 
-@keyframes hide{
-to{
-opacity:0;
-visibility:hidden;
-pointer-events:none
-}
-}
-
-/* LOGIN FIX */
-.login{
-position:fixed;
-inset:0;
-width:100%;
-height:100dvh;
-min-height:100vh;
-display:grid;
-place-items:center;
-padding:25px;
-background:#fff;
-overflow-y:auto;
-overflow-x:hidden;
-overscroll-behavior:contain;
--webkit-overflow-scrolling:touch;
-z-index:40;
+/* AUTH */
+#auth{
+  display:none;
+  min-height:100dvh;
+  padding:28px 20px;
+  align-items:center;
+  justify-content:center;
 }
 
-.loginCard{
-width:min(420px,100%);
-background:#080808;
-color:#fff;
-border-radius:28px;
-padding:30px;
-box-shadow:0 20px 50px #bbb
+.authBox{
+  width:100%;
+  max-width:430px;
+}
+
+.authLogo{
+  width:70px;
+  height:70px;
+  border-radius:20px;
+  background:#fff;
+  color:#111;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:23px;
+  margin:0 auto 18px;
+}
+
+.authTitle{
+  text-align:center;
+  font-size:28px;
+  font-weight:900;
+  margin-bottom:5px;
+}
+
+.authSub{
+  text-align:center;
+  color:#8e96a5;
+  font-size:14px;
+  margin-bottom:25px;
+}
+
+.authTabs{
+  display:flex;
+  background:#181c25;
+  padding:4px;
+  border-radius:14px;
+  margin-bottom:18px;
+}
+
+.authTabs button{
+  flex:1;
+  padding:12px;
+  border-radius:11px;
+  background:transparent;
+  color:#9299a8;
+  font-weight:700;
+}
+
+.authTabs button.active{
+  background:#fff;
+  color:#111;
+}
+
+.field{
+  margin-bottom:13px;
+}
+
+.field label{
+  display:block;
+  font-size:13px;
+  color:#9ba2b0;
+  margin:0 0 7px 3px;
+}
+
+.field input{
+  width:100%;
+  padding:14px;
+  border:1px solid #292e39;
+  outline:none;
+  border-radius:13px;
+  background:#171b23;
+  color:#fff;
+}
+
+.field input:focus{
+  border-color:#777;
+}
+
+.mainBtn{
+  width:100%;
+  padding:14px;
+  border-radius:13px;
+  background:#fff;
+  color:#111;
+  font-weight:900;
+  margin-top:5px;
+}
+
+.authMsg{
+  min-height:20px;
+  text-align:center;
+  color:#ff7777;
+  font-size:13px;
+  margin-top:12px;
+}
+
+/* APP */
+#mainApp{
+  display:none;
+  min-height:100dvh;
+}
+
+.topbar{
+  height:68px;
+  padding:0 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid #20242d;
+  background:#10131a;
+  position:sticky;
+  top:0;
+  z-index:50;
 }
 
 .brand{
-font-size:12px;
-letter-spacing:3px;
-font-weight:bold;
-color:#aaa
+  font-weight:900;
+  font-size:18px;
 }
 
-.loginCard h2{
+.brand small{
+  display:block;
+  color:#727a89;
+  font-size:9px;
+  letter-spacing:1px;
+  margin-top:2px;
+}
+
+.topProfile{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:#252a34;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  font-weight:800;
+}
+
+.topProfile img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.content{
+  padding:18px 16px 100px;
+}
+
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+.hero{
+  padding:22px;
+  border-radius:22px;
+  background:linear-gradient(135deg,#191d26,#11141b);
+  border:1px solid #292e38;
+  margin-bottom:17px;
+}
+
+.hero h1{
+  margin:0;
+  font-size:27px;
+}
+
+.hero p{
+  color:#8d95a4;
+  margin:8px 0 0;
+  line-height:1.5;
+  font-size:14px;
+}
+
+.sectionTitle{
+  font-size:18px;
+  font-weight:900;
+  margin:22px 0 12px;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.card{
+  background:#171b23;
+  border:1px solid #282d37;
+  border-radius:17px;
+  padding:17px;
+}
+
+.cardNum{
+  font-size:25px;
+  font-weight:900;
+}
+
+.cardText{
+  color:#858d9c;
+  font-size:12px;
+  margin-top:5px;
+}
+
+.match{
+  background:#171b23;
+  border:1px solid #292e38;
+  border-radius:17px;
+  padding:15px;
+  margin-bottom:11px;
+}
+
+.matchTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:13px;
+}
+
+.badge{
+  padding:5px 9px;
+  border-radius:8px;
+  background:#252a34;
+  color:#d8dce3;
+  font-size:10px;
+  font-weight:800;
+}
+
+.matchTeams{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  text-align:center;
+}
+
+.team{
+  width:40%;
+  font-weight:900;
+}
+
+.vs{
+  color:#6e7685;
+  font-size:12px;
+  font-weight:900;
+}
+
+.player{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:#171b23;
+  border:1px solid #292e38;
+  border-radius:15px;
+  padding:12px;
+  margin-bottom:10px;
+}
+
+.avatar{
+  width:46px;
+  height:46px;
+  flex:none;
+  border-radius:50%;
+  background:#292e38;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  font-weight:900;
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.playerInfo{
+  flex:1;
+  min-width:0;
+}
+
+.playerName{
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.playerMeta{
+  color:#7f8795;
+  font-size:12px;
+  margin-top:4px;
+}
+
+.pointsRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 0;
+  border-bottom:1px solid #252a33;
+}
+
+.rank{
+  width:35px;
+  font-weight:900;
+  color:#7f8795;
+}
+
+.pointsName{
+  flex:1;
+  font-weight:800;
+}
+
+.pointsValue{
+  font-weight:900;
+}
+
+/* PROFILE */
+.profileBox{
+  text-align:center;
+  padding:22px 0;
+}
+
+.bigAvatar{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  margin:auto;
+  background:#272c36;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  font-size:30px;
+  font-weight:900;
+  border:3px solid #fff;
+}
+
+.bigAvatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.profileName{
+  font-size:22px;
+  font-weight:900;
+  margin-top:13px;
+}
+
+.profileEmail{
+  color:#7f8795;
+  font-size:13px;
+  margin-top:5px;
+}
+
+.profileActions{
+  margin-top:25px;
+}
+
+.actionBtn{
+  width:100%;
+  padding:14px;
+  border-radius:13px;
+  background:#191d25;
+  color:#fff;
+  border:1px solid #2a303b;
+  margin-bottom:10px;
+  font-weight:800;
+}
+
+/* BOTTOM NAV */
+.bottomNav{
+  position:fixed;
+  left:50%;
+  bottom:0;
+  transform:translateX(-50%);
+  width:min(520px,100%);
+  height:76px;
+  background:#11141b;
+  border-top:1px solid #292e37;
+  display:flex;
+  z-index:100;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+
+.navBtn{
+  flex:1;
+  background:transparent;
+  color:#737b8a;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:5px;
+  font-size:10px;
+  font-weight:800;
+}
+
+.navIcon{
+  font-size:19px;
+}
+
+.navBtn.active{
+  color:#fff;
+}
+
+/* MODAL */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:500;
+  background:#000b;
+  align-items:flex-end;
+  justify-content:center;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modalBox{
+  width:min(520px,100%);
+  background:#151920;
+  border-radius:23px 23px 0 0;
+  padding:20px;
+  border-top:1px solid #303641;
+  padding-bottom:calc(20px + env(safe-area-inset-bottom));
+}
+
+.modalTitle{
+  font-size:19px;
+  font-weight:900;
+  margin-bottom:16px;
+}
+
+.closeBtn{
+  float:right;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:#282d37;
+  color:#fff;
+}
+
+/* EMPTY */
+.empty{
+  text-align:center;
+  padding:35px 15px;
+  color:#737b89;
+  background:#171b23;
+  border:1px solid #292e38;
+  border-radius:17px;
+}
+
+/* RESPONSIVE */
+@media(max-width:360px){
+  .content{
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  .hero h1{
+    font-size:23px;
+  }
+}
+
+/* prevent accidental browser pull/glitch */
+body,
+.app,
+.content{
+  overscroll-behavior-y:none;
+}
+
+img{
+  user-select:none;
+  -webkit-user-drag:none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splashBox">
+    <div class="logo">UR</div>
+    <div class="splashTitle">UR Free Tournament</div>
+    <div class="loader"><span></span></div>
+  </div>
+</div>
+
+<!-- AUTH -->
+<section id="auth">
+
+  <div class="authBox">
+
+    <div class="authLogo">UR</div>
+
+    <div class="authTitle">UR Free Tournament</div>
+    <div class="authSub">Create your player account and join the tournament.</div>
+
+    <div class="authTabs">
+      <button id="loginTab" class="active" onclick="showAuth('login')">Login</button>
+      <button id="signupTab" onclick="showAuth('signup')">Sign Up</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="loginForm">
+
+      <div class="field">
+        <label>Username or Email</label>
+        <input id="loginUser" type="text" autocomplete="username"
+               placeholder="Enter username or email">
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input id="loginPass" type="password"
+               autocomplete="current-password"
+               placeholder="Enter password">
+      </div>
+
+      <button class="mainBtn" onclick="loginUser()">LOGIN</button>
+
+    </div>
+
+    <!-- SIGNUP -->
+    <div id="signupForm" style="display:none">
+
+      <div class="field">
+        <label>Full Name</label>
+        <input id="signupName" type="text"
+               placeholder="Enter your name">
+      </div>
+
+      <div class="field">
+        <label>Username</label>
+        <input id="signupUsername" type="text"
+               placeholder="Choose a username">
+      </div>
+
+      <div class="field">
+        <label>Email</label>
+        <input id="signupEmail" type="email"
+               placeholder="Enter your email">
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input id="signupPass" type="password"
+               placeholder="Create a password">
+      </div>
+
+      <button class="mainBtn" onclick="signupUser()">CREATE ACCOUNT</button>
+
+    </div>
+
+    <div id="authMsg" class="authMsg"></div>
+
+  </div>
+</section>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="app">
+
+  <header class="topbar">
+    <div class="brand">
+      UR FREE TOURNAMENT
+      <small>eFOOTBALL COMMUNITY</small>
+    </div>
+
+    <button class="topProfile" onclick="openPage('profile')">
+      <span id="topAvatarText">U</span>
+      <img id="topAvatarImg" style="display:none">
+    </button>
+  </header>
+
+  <main class="content">
+
+    <!-- HOME -->
+    <section id="homePage" class="page active">
+
+      <div class="hero">
+        <h1 id="welcomeTitle">Welcome 👋</h1>
+        <p>
+          Welcome to UR Free Tournament.
+          Check matches, players and points from one place.
+        </p>
+      </div>
+
+      <div class="cards">
+
+        <div class="card">
+          <div class="cardNum" id="statPlayers">0</div>
+          <div class="cardText">Players</div>
+        </div>
+
+        <div class="card">
+          <div class="cardNum" id="statMatches">0</div>
+          <div class="cardText">Matches</div>
+        </div>
+
+        <div class="card">
+          <div class="cardNum" id="statPoints">0</div>
+          <div class="cardText">My Points</div>
+        </div>
+
+        <div class="card">
+          <div class="cardNum">LIVE</div>
+          <div class="cardText">Tournament</div>
+        </div>
+
+      </div>
+
+      <div class="sectionTitle">Latest Matches</div>
+
+      <div id="homeMatches"></div>
+
+    </section>
+
+    <!-- MATCHES -->
+    <section id="matchesPage" class="page">
+
+      <div class="sectionTitle" style="margin-top:0">Matches</div>
+
+      <div id="matchesList"></div>
+
+    </section>
+
+    <!-- PLAYERS -->
+    <section id="playersPage" class="page">
+
+      <div class="sectionTitle" style="margin-top:0">Players</div>
+
+      <div id="playersList"></div>
+
+    </section>
+
+    <!-- POINTS -->
+    <section id="pointsPage" class="page">
+
+      <div class="sectionTitle" style="margin-top:0">Points Table</div>
+
+      <div class="card" style="margin-bottom:15px">
+        <div class="cardText">YOUR CURRENT POINTS</div>
+        <div class="cardNum" id="myPointsBig">0</div>
+      </div>
+
+      <div id="pointsList"></div>
+
+    </section>
+
+    <!-- ADMIN TEAM -->
+    <section id="adminPage" class="page">
+
+      <div class="hero">
+        <h1>Admin Team</h1>
+        <p>
+          Official tournament administration and support information.
+        </p>
+      </div>
+
+      <div id="adminTeamList"></div>
+
+    </section>
+
+    <!-- PROFILE -->
+    <section id="profilePage" class="page">
+
+      <div class="profileBox">
+
+        <div class="bigAvatar" id="bigAvatar">
+          <span id="bigAvatarText">U</span>
+          <img id="bigAvatarImg" style="display:none">
+        </div>
+
+        <div class="profileName" id="profileName">User</div>
+        <div class="profileEmail" id="profileEmail">-</div>
+
+      </div>
+
+      <div class="profileActions">
+
+        <button class="actionBtn" onclick="openPhotoModal()">
+          🖼️ Change Profile Photo
+        </button>
+
+        <button class="actionBtn" onclick="logoutUser()">
+          🚪 Logout
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- NAV -->
+  <nav class="bottomNav">
+
+    <button class="navBtn active" data-page="home" onclick="openPage('home')">
+      <span class="navIcon">⌂</span>
+      Home
+    </button>
+
+    <button class="navBtn" data-page="matches" onclick="openPage('matches')">
+      <span class="navIcon">⚽</span>
+      Matches
+    </button>
+
+    <button class="navBtn" data-page="players" onclick="openPage('players')">
+      <span class="navIcon">♟</span>
+      Players
+    </button>
+
+    <button class="navBtn" data-page="points" onclick="openPage('points')">
+      <span class="navIcon">🏆</span>
+      Points
+    </button>
+
+    <button class="navBtn" data-page="profile" onclick="openPage('profile')">
+      <span class="navIcon">●</span>
+      Profile
+    </button>
+
+  </nav>
+
+</div>
+
+<!-- PHOTO MODAL -->
+<div id="photoModal" class="modal">
+
+  <div class="modalBox">
+
+    <button class="closeBtn" onclick="closePhotoModal()">×</button>
+
+    <div class="modalTitle">Profile Photo</div>
+
+    <input id="photoInput"
+           type="file"
+           accept="image/*"
+           onchange="savePhoto(event)"
+           style="width:100%;margin-bottom:15px">
+
+    <button class="mainBtn" onclick="closePhotoModal()">DONE</button>
+
+  </div>
+
+</div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   STORAGE KEYS
+   Compatible with previous UR Tournament files
+========================================================= */
+
+const SHARED_KEY = "UR_TOURNAMENT_SHARED_MONO_V4";
+const ACCOUNTS_KEY = "UR_PLAYER_ACCOUNTS_V3";
+const SESSION_KEY = "UR_PLAYER_SESSION_V3";
+
+/* =========================================================
+   SAFE STORAGE
+========================================================= */
+
+function readJSON(key, fallback){
+  try{
+    const raw = localStorage.getItem(key);
+    if(!raw) return fallback;
+    return JSON.parse(raw);
+  }catch(e){
+    return fallback;
+  }
+}
+
+function writeJSON(key, value){
+  try{
+    localStorage.setItem(key, JSON.stringify(value));
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+/* =========================================================
+   DEFAULT DATA
+========================================================= */
+
+const defaultShared = {
+  players: [],
+  matches: [],
+  points: [],
+  adminTeam: [
+    {
+      name:"UR Tournament Admin",
+      role:"Tournament Administrator",
+      contact:"Official Support"
+    }
+  ],
+  tournamentName:"UR Free Tournament"
+};
+
+function getShared(){
+  const data = readJSON(SHARED_KEY, null);
+
+  if(!data || typeof data !== "object"){
+    writeJSON(SHARED_KEY, defaultShared);
+    return JSON.parse(JSON.stringify(defaultShared));
+  }
+
+  return {
+    ...defaultShared,
+    ...data,
+    players:Array.isArray(data.players) ? data.players : [],
+    matches:Array.isArray(data.matches) ? data.matches : [],
+    points:Array.isArray(data.points) ? data.points : [],
+    adminTeam:Array.isArray(data.adminTeam) ? data.adminTeam : defaultShared.adminTeam
+  };
+}
+
+function getAccounts(){
+  const data = readJSON(ACCOUNTS_KEY, []);
+
+  if(Array.isArray(data)) return data;
+
+  if(data && typeof data === "object"){
+    return Object.values(data);
+  }
+
+  return [];
+}
+
+function saveAccounts(accounts){
+  writeJSON(ACCOUNTS_KEY, accounts);
+}
+
+function getSession(){
+  return readJSON(SESSION_KEY, null);
+}
+
+function setSession(user){
+  writeJSON(SESSION_KEY, user);
+}
+
+function clearSession(){
+  localStorage.removeItem(SESSION_KEY);
+}
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function escapeHTML(value){
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function makeId(){
+  return Date.now().toString(36) +
+         Math.random().toString(36).slice(2,8);
+}
+
+function initials(name){
+  const text = String(name || "U").trim();
+
+  if(!text) return "U";
+
+  const parts = text.split(/\s+/);
+
+  if(parts.length === 1){
+    return parts[0].slice(0,2).toUpperCase();
+  }
+
+  return (
+    parts[0][0] +
+    parts[parts.length-1][0]
+  ).toUpperCase();
+}
+
+function normalize(value){
+  return String(value || "").trim().toLowerCase();
+}
+
+/* =========================================================
+   AUTH SCREEN
+========================================================= */
+
+function showAuth(type){
+
+  const loginForm = document.getElementById("loginForm");
+  const signupForm = document.getElementById("signupForm");
+
+  const loginTab = document.getElementById("loginTab");
+  const signupTab = document.getElementById("signupTab");
+
+  document.getElementById("authMsg").textContent = "";
+
+  if(type === "signup"){
+
+    loginForm.style.display = "none";
+    signupForm.style.display = "block";
+
+    loginTab.classList.remove("active");
+    signupTab.classList.add("active");
+
+  }else{
+
+    loginForm.style.display = "block";
+    signupForm.style.display = "none";
+
+    loginTab.classList.add("active");
+    signupTab.classList.remove("active");
+
+  }
+}
+
+function showAuthMessage(message){
+  document.getElementById("authMsg").textContent = message;
+}
+
+/* =========================================================
+   SIGN UP
+========================================================= */
+
+function signupUser(){
+
+  const name = document.getElementById("signupName").value.trim();
+  const username = document.getElementById("signupUsername").value.trim();
+  const email = document.getElementById("signupEmail").value.trim();
+  const password = document.getElementById("signupPass").value;
+
+  if(!name || !username || !email || !password){
+    showAuthMessage("Please fill in all fields.");
+    return;
+  }
+
+  if(password.length < 4){
+    showAuthMessage("Password must contain at least 4 characters.");
+    return;
+  }
+
+  const accounts = getAccounts();
+
+  const usernameExists = accounts.some(
+    user => normalize(user.username) === normalize(username)
+  );
+
+  if(usernameExists){
+    showAuthMessage("Username already exists.");
+    return;
+  }
+
+  const emailExists = accounts.some(
+    user => normalize(user.email) === normalize(email)
+  );
+
+  if(emailExists){
+    showAuthMessage("Email already exists.");
+    return;
+  }
+
+  const user = {
+    id:makeId(),
+    name:name,
+    username:username,
+    email:email,
+    password:password,
+    points:0,
+    photo:"",
+    createdAt:new Date().toISOString()
+  };
+
+  accounts.push(user);
+  saveAccounts(accounts);
+
+  /* Add player to shared tournament data */
+  const shared = getShared();
+
+  const alreadyPlayer = shared.players.some(
+    p =>
+      normalize(p.username) === normalize(username) ||
+      normalize(p.email) === normalize(email)
+  );
+
+  if(!alreadyPlayer){
+
+    shared.players.push({
+      id:user.id,
+      name:user.name,
+      username:user.username,
+      email:user.email,
+      points:0,
+      photo:""
+    });
+
+    writeJSON(SHARED_KEY,shared);
+  }
+
+  setSession({
+    id:user.id,
+    name:user.name,
+    username:user.username,
+    email:user.email,
+    points:0,
+    photo:""
+  });
+
+  openApp();
+}
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+function loginUser(){
+
+  const login = document.getElementById("loginUser").value.trim();
+  const password = document.getElementById("loginPass").value;
+
+  if(!login || !password){
+    showAuthMessage("Enter your username/email and password.");
+    return;
+  }
+
+  const accounts = getAccounts();
+
+  const user = accounts.find(
+    item =>
+      (
+        normalize(item.username) === normalize(login) ||
+        normalize(item.email) === normalize(login)
+      ) &&
+      String(item.password) === String(password)
+  );
+
+  if(!user){
+    showAuthMessage("Incorrect username/email or password.");
+    return;
+  }
+
+  setSession({
+    id:user.id,
+    name:user.name,
+    username:user.username,
+    email:user.email,
+    points:Number(user.points || 0),
+    photo:user.photo || ""
+  });
+
+  openApp();
+}
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+function logoutUser(){
+
+  clearSession();
+
+  document.getElementById("mainApp").style.display = "none";
+  document.getElementById("auth").style.display = "flex";
+
+  document.getElementById("loginUser").value = "";
+  document.getElementById("loginPass").value = "";
+
+  showAuth("login");
+}
+
+/* =========================================================
+   OPEN APP
+========================================================= */
+
+function openApp(){
+
+  const session = getSession();
+
+  if(!session){
+    document.getElementById("splash").style.display = "none";
+    document.getElementById("auth").style.display = "flex";
+    document.getElementById("mainApp").style.display = "none";
+    return;
+  }
+
+  document.getElementById("auth").style.display = "none";
+  document.getElementById("mainApp").style.display = "block";
+
+  refreshUserFromAccount();
+  renderEverything();
+
+  openPage("home");
+}
+
+/* =========================================================
+   REFRESH SESSION DATA
+========================================================= */
+
+function refreshUserFromAccount(){
+
+  const session = getSession();
+
+  if(!session) return;
+
+  const accounts = getAccounts();
+
+  const user = accounts.find(
+    item => item.id === session.id
+  );
+
+  if(user){
+
+    const updated = {
+      id:user.id,
+      name:user.name,
+      username:user.username,
+      email:user.email,
+      points:Number(user.points || 0),
+      photo:user.photo || ""
+    };
+
+    setSession(updated);
+  }
+}
+
+/* =========================================================
+   PAGE NAVIGATION
+========================================================= */
+
+function openPage(page){
+
+  const pages = document.querySelectorAll(".page");
+
+  pages.forEach(item => {
+    item.classList.remove("active");
+  });
+
+  const target = document.getElementById(page + "Page");
+
+  if(target){
+    target.classList.add("active");
+  }
+
+  const navButtons = document.querySelectorAll(".navBtn");
+
+  navButtons.forEach(btn => {
+
+    if(btn.dataset.page === page){
+      btn.classList.add("active");
+    }else{
+      btn.classList.remove("active");
+    }
+
+  });
+
+  window.scrollTo({
+    top:0,
+    behavior:"instant"
+  });
+
+  renderEverything();
+}
+
+/* =========================================================
+   RENDER EVERYTHING
+========================================================= */
+
+function renderEverything(){
+
+  const shared = getShared();
+  const session = getSession();
+
+  if(!session) return;
+
+  const players = shared.players;
+  const matches = shared.matches;
+  const points = shared.points;
+
+  /* Stats */
+
+  document.getElementById("statPlayers").textContent =
+    players.length;
+
+  document.getElementById("statMatches").textContent =
+    matches.length;
+
+  document.getElementById("statPoints").textContent =
+    getMyPoints();
+
+  document.getElementById("myPointsBig").textContent =
+    getMyPoints();
+
+  /* User */
+
+  document.getElementById("welcomeTitle").textContent =
+    "Welcome, " + (session.name || "Player") + " 👋";
+
+  document.getElementById("profileName").textContent =
+    session.name || "Player";
+
+  document.getElementById("profileEmail").textContent =
+    session.email || "";
+
+  updateAvatar();
+
+  /* Lists */
+
+  renderHomeMatches(matches);
+  renderMatches(matches);
+  renderPlayers(players);
+  renderPoints(players,points);
+  renderAdminTeam(shared.adminTeam);
+}
+
+/* =========================================================
+   MY POINTS
+========================================================= */
+
+function getMyPoints(){
+
+  const session = getSession();
+
+  if(!session) return 0;
+
+  const shared = getShared();
+
+  let total = Number(session.points || 0);
+
+  const player = shared.players.find(
+    p => p.id === session.id ||
+         normalize(p.username) === normalize(session.username) ||
+         normalize(p.email) === normalize(session.email)
+  );
+
+  if(player && player.points != null){
+    total = Number(player.points || 0);
+  }
+
+  const pointEntry = shared.points.find(
+    p =>
+      p.id === session.id ||
+      normalize(p.username) === normalize(session.username) ||
+      normalize(p.email) === normalize(session.email)
+  );
+
+  if(pointEntry && pointEntry.points != null){
+    total = Number(pointEntry.points || 0);
+  }
+
+  return total;
+}
+
+/* =========================================================
+   HOME MATCHES
+========================================================= */
+
+function renderHomeMatches(matches){
+
+  const box = document.getElementById("homeMatches");
+
+  if(!matches.length){
+
+    box.innerHTML =
+      '<div class="empty">No matches available yet.</div>';
+
+    return;
+  }
+
+  box.innerHTML = matches
+    .slice(0,3)
+    .map(matchHTML)
+    .join("");
+}
+
+/* =========================================================
+   MATCHES
+========================================================= */
+
+function renderMatches(matches){
+
+  const box = document.getElementById("matchesList");
+
+  if(!matches.length){
+
+    box.innerHTML =
+      '<div class="empty">No matches available yet.</div>';
+
+    return;
+  }
+
+  box.innerHTML = matches.map(matchHTML).join("");
+}
+
+function matchHTML(match){
+
+  const teamA =
+    match.teamA ||
+    match.player1 ||
+    match.playerOne ||
+    "Player 1";
+
+  const teamB =
+    match.teamB ||
+    match.player2 ||
+    match.playerTwo ||
+    "Player 2";
+
+  const status =
+    match.status ||
+    "Upcoming";
+
+  const date =
+    match.date ||
+    match.time ||
+    "";
+
+  return `
+    <div class="match">
+
+      <div class="matchTop">
+        <span class="badge">${escapeHTML(status)}</span>
+        <span style="font-size:11px;color:#777f8d">
+          ${escapeHTML(date)}
+        </span>
+      </div>
+
+      <div class="matchTeams">
+        <div class="team">${escapeHTML(teamA)}</div>
+
+        <div class="vs">VS</div>
+
+        <div class="team">${escapeHTML(teamB)}</div>
+      </div>
+
+    </div>
+  `;
+}
+
+/* =========================================================
+   PLAYERS
+========================================================= */
+
+function renderPlayers(players){
+
+  const box = document.getElementById("playersList");
+
+  if(!players.length){
+
+    box.innerHTML =
+      '<div class="empty">No players registered yet.</div>';
+
+    return;
+  }
+
+  box.innerHTML = players.map(player => {
+
+    const name =
+      player.name ||
+      player.username ||
+      "Player";
+
+    const photo =
+      player.photo ||
+      "";
+
+    const points =
+      Number(player.points || 0);
+
+    const avatar = photo
+      ? `<img src="${photo}" alt="">`
+      : `<span>${escapeHTML(initials(name))}</span>`;
+
+    return `
+      <div class="player">
+
+        <div class="avatar">
+          ${avatar}
+        </div>
+
+        <div class="playerInfo">
+
+          <div class="playerName">
+            ${escapeHTML(name)}
+          </div>
+
+          <div class="playerMeta">
+            ${escapeHTML(player.username || "Player")}
+          </div>
+
+        </div>
+
+        <div style="font-weight:900">
+          ${points} P
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
+}
+
+/* =========================================================
+   POINTS TABLE
+========================================================= */
+
+function renderPoints(players,points){
+
+  const box = document.getElementById("pointsList");
+
+  let table = [];
+
+  if(points.length){
+
+    table = points.map(item => ({
+      name:item.name || item.username || "Player",
+      points:Number(item.points || 0)
+    }));
+
+  }else{
+
+    table = players.map(item => ({
+      name:item.name || item.username || "Player",
+      points:Number(item.points || 0)
+    }));
+
+  }
+
+  if(!table.length){
+
+    box.innerHTML =
+      '<div class="empty">Points table is empty.</div>';
+
+    return;
+  }
+
+  table.sort((a,b)=>b.points-a.points);
+
+  box.innerHTML = table.map((item,index)=>`
+
+    <div class="pointsRow">
+
+      <div class="rank">#${index+1}</div>
+
+      <div class="pointsName">
+        ${escapeHTML(item.name)}
+      </div>
+
+      <div class="pointsValue">
+        ${item.points} P
+      </div>
+
+    </div>
+
+  `).join("");
+}
+
+/* =========================================================
+   ADMIN TEAM
+========================================================= */
+
+function renderAdminTeam(team){
+
+  const box = document.getElementById("adminTeamList");
+
+  if(!team || !team.length){
+
+    box.innerHTML =
+      '<div class="empty">Admin team information is unavailable.</div>';
+
+    return;
+  }
+
+  box.innerHTML = team.map(member => `
+
+    <div class="player">
+
+      <div class="avatar">
+        ${escapeHTML(initials(member.name || "A"))}
+      </div>
+
+      <div class="playerInfo">
+
+        <div class="playerName">
+          ${escapeHTML(member.name || "Admin")}
+        </div>
+
+        <div class="playerMeta">
+          ${escapeHTML(member.role || "Administrator")}
+        </div>
+
+      </div>
+
+    </div>
+
+  `).join("");
+}
+
+/* =========================================================
+   AVATAR
+========================================================= */
+
+function updateAvatar(){
+
+  const session = getSession();
+
+  if(!session) return;
+
+  const photo = session.photo || "";
+  const text = initials(session.name);
+
+  const topText = document.getElementById("topAvatarText");
+  const topImg = document.getElementById("topAvatarImg");
+
+  const bigText = document.getElementById("bigAvatarText");
+  const bigImg = document.getElementById("bigAvatarImg");
+
+  if(photo){
+
+    topText.style.display = "none";
+    topImg.style.display = "block";
+    topImg.src = photo;
+
+    bigText.style.display = "none";
+    bigImg.style.display = "block";
+    bigImg.src = photo;
+
+  }else{
+
+    topText.style.display = "block";
+    topText.textContent = text;
+
+    topImg.style.display = "none";
+    topImg.removeAttribute("src");
+
+    bigText.style.display = "block";
+    bigText.textContent = text;
+
+    bigImg.style.display = "none";
+    bigImg.removeAttribute("src");
+
+  }
+}
+
+/* =========================================================
+   PHOTO
+========================================================= */
+
+function openPhotoModal(){
+  document.getElementById("photoModal").classList.add("show");
+}
+
+function closePhotoModal(){
+  document.getElementById("photoModal").classList.remove("show");
+}
+
+function savePhoto(event){
+
+  const file = event.target.files[0];
+
+  if(!file) return;
+
+  if(!file.type.startsWith("image/")){
+    alert("Please select an image.");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function(){
+
+    const photo = reader.result;
+
+    const session = getSession();
+
+    if(!session) return;
+
+    session.photo = photo;
+
+    setSession(session);
+
+    const accounts = getAccounts();
+
+    const index = accounts.findIndex(
+      item => item.id === session.id
+    );
+
+    if(index !== -1){
+
+      accounts[index].photo = photo;
+
+      saveAccounts(accounts);
+    }
+
+    /* update shared player */
+    const shared = getShared();
+
+    const pIndex = shared.players.findIndex(
+      item =>
+        item.id === session.id ||
+        normalize(item.username) === normalize(session.username)
+    );
+
+    if(pIndex !== -1){
+
+      shared.players[pIndex].photo = photo;
+
+      writeJSON(SHARED_KEY,shared);
+    }
+
+    updateAvatar();
+
+    closePhotoModal();
+  };
+
+  reader.readAsDataURL(file);
+}
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+function initialize(){
+
+  /* Make sure default storage exists */
+  getShared();
+  getAccounts();
+
+  setTimeout(()=>{
+
+    const splash = document.getElementById("splash");
+
+    splash.style.display = "none";
+
+    if(getSession()){
+      openApp();
+    }else{
+      document.getElementById("auth").style.display = "flex";
+      document.getElementById("mainApp").style.display = "none";
+    }
+
+  },900);
+}
+
+/* =========================================================
+   MOBILE SAFETY
+========================================================= */
+
+/*
+ Prevent the old "pull down and page turns into text/glitches"
+ behavior on supported mobile browsers.
+*/
+
+document.addEventListener(
+  "touchmove",
+  function(event){
+
+    const target = event.target;
+
+    if(
+      target.closest(".content") ||
+      target.closest(".modalBox") ||
+      target.closest("input")
+    ){
+      return;
+    }
+
+    if(window.scrollY <= 0){
+      event.preventDefault();
+    }
+
+  },
+  {passive:false}
+);
+
+/* Prevent accidental double tap zoom */
+let lastTouchEnd = 0;
+
+document.addEventListener(
+  "touchend",
+  function(event){
+
+    const now = Date.now();
+
+    if(now - lastTouchEnd <= 300){
+      event.preventDefault();
+    }
+
+    lastTouchEnd = now;
+
+  },
+  {passive:false}
+);
+
+/* Keep app data refreshed when returning to page */
+document.addEventListener(
+  "visibilitychange",
+  function(){
+
+    if(!document.hidden && getSession()){
+      refreshUserFromAccount();
+      renderEverything();
+    }
+
+  }
+);
+
+/* Start */
+initialize();
+
+</script>
+
+</body>
+</html>
